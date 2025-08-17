@@ -166,4 +166,36 @@ export class MembershipsController {
   activate(@Param('id', ParseUUIDPipe) id: string) {
     return this.membershipsService.activateMembership(id);
   }
+
+  @Get('validate/:id')
+  @Roles(Role.ADMIN, Role.RECEPTIONIST, Role.TRAINER)
+  @ApiOperation({ summary: 'Validate membership by membership ID' })
+  @ApiResponse({ status: 200, description: 'Membership validation result' })
+  validateMembership(@Param('id', ParseUUIDPipe) id: string) {
+    return this.membershipsService.validateMembership(id);
+  }
+
+  @Get('validate/user/:userId')
+  @Roles(Role.ADMIN, Role.RECEPTIONIST, Role.TRAINER)
+  @ApiOperation({ summary: 'Validate membership by user ID' })
+  @ApiResponse({ status: 200, description: 'Membership validation result' })
+  validateMembershipByUser(@Param('userId', ParseUUIDPipe) userId: string) {
+    return this.membershipsService.validateMembershipByUserId(userId);
+  }
+
+  @Get('validate/cedula/:cedula')
+  @Roles(Role.ADMIN, Role.RECEPTIONIST, Role.TRAINER)
+  @ApiOperation({ summary: 'Validate membership by cedula (Colombian ID)' })
+  @ApiResponse({ status: 200, description: 'Membership validation result' })
+  validateMembershipByCedula(@Param('cedula') cedula: string) {
+    return this.membershipsService.validateMembershipByCedula(cedula);
+  }
+
+  @Get('validate/holler/:holler')
+  @Roles(Role.ADMIN, Role.RECEPTIONIST, Role.TRAINER)
+  @ApiOperation({ summary: 'Validate membership by digital holler ID' })
+  @ApiResponse({ status: 200, description: 'Membership validation result' })
+  validateMembershipByHoller(@Param('holler') holler: string) {
+    return this.membershipsService.validateMembershipByHoller(holler);
+  }
 }

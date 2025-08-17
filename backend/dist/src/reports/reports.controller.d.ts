@@ -25,6 +25,7 @@ export declare class ReportsController {
         payments: ({
             user: {
                 email: string;
+                cedula: string;
                 firstName: string;
                 lastName: string;
             };
@@ -80,6 +81,7 @@ export declare class ReportsController {
         memberships: ({
             user: {
                 email: string;
+                cedula: string;
                 firstName: string;
                 lastName: string;
             };
@@ -124,6 +126,7 @@ export declare class ReportsController {
             };
             bookings: ({
                 user: {
+                    cedula: string;
                     firstName: string;
                     lastName: string;
                 };

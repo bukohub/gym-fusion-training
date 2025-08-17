@@ -24,7 +24,7 @@ const Table = <T extends Record<string, any>>({
   sortKey,
   sortDirection,
   loading = false,
-  emptyMessage = 'No data available'
+  emptyMessage = 'No hay datos disponibles'
 }: TableProps<T>) => {
   const handleSort = (key: string, sortable?: boolean) => {
     if (sortable && onSort) {

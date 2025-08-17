@@ -8,8 +8,8 @@ import { LoginData } from '../../types';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
 const schema = yup.object({
-  email: yup.string().email('Invalid email').required('Email is required'),
-  password: yup.string().required('Password is required'),
+  email: yup.string().email('Email inválido').required('El email es requerido'),
+  password: yup.string().required('La contraseña es requerida'),
 });
 
 const LoginPage: React.FC = () => {
@@ -45,15 +45,15 @@ const LoginPage: React.FC = () => {
             <span className="text-white font-bold text-xl">G</span>
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
+            Inicia sesión en tu cuenta
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Or{' '}
+            O{' '}
             <Link
               to="/register"
               className="font-medium text-primary-600 hover:text-primary-500"
             >
-              create a new account
+              crea una nueva cuenta
             </Link>
           </p>
         </div>
@@ -62,7 +62,7 @@ const LoginPage: React.FC = () => {
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
               <label htmlFor="email" className="sr-only">
-                Email address
+                Dirección de email
               </label>
               <input
                 {...register('email')}
@@ -71,7 +71,7 @@ const LoginPage: React.FC = () => {
                 className={`relative block w-full px-3 py-2 border ${
                   errors.email ? 'border-red-300' : 'border-gray-300'
                 } placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm`}
-                placeholder="Email address"
+                placeholder="Dirección de email"
               />
               {errors.email && (
                 <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
@@ -80,7 +80,7 @@ const LoginPage: React.FC = () => {
             
             <div>
               <label htmlFor="password" className="sr-only">
-                Password
+                Contraseña
               </label>
               <input
                 {...register('password')}
@@ -89,7 +89,7 @@ const LoginPage: React.FC = () => {
                 className={`relative block w-full px-3 py-2 border ${
                   errors.password ? 'border-red-300' : 'border-gray-300'
                 } placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm`}
-                placeholder="Password"
+                placeholder="Contraseña"
               />
               {errors.password && (
                 <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
@@ -103,7 +103,7 @@ const LoginPage: React.FC = () => {
                 to="/forgot-password"
                 className="font-medium text-primary-600 hover:text-primary-500"
               >
-                Forgot your password?
+                ¿Olvidaste tu contraseña?
               </Link>
             </div>
           </div>
@@ -114,7 +114,7 @@ const LoginPage: React.FC = () => {
               disabled={isLoading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? <LoadingSpinner size="sm" /> : 'Sign in'}
+              {isLoading ? <LoadingSpinner size="sm" /> : 'Iniciar Sesión'}
             </button>
           </div>
         </form>

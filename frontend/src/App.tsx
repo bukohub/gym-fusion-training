@@ -15,6 +15,7 @@ import ClassesPage from './pages/classes/ClassesPage';
 import ProductsPage from './pages/products/ProductsPage';
 import ReportsPage from './pages/reports/ReportsPage';
 import ProfilePage from './pages/ProfilePage';
+import ValidationPage from './pages/validation/ValidationPage';
 
 // Route protection component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -75,6 +76,7 @@ function App() {
                   <Route path="/classes/*" element={<ClassesPage />} />
                   <Route path="/products/*" element={<ProductsPage />} />
                   <Route path="/reports" element={<ReportsPage />} />
+                  <Route path="/validation" element={<ValidationPage />} />
                   <Route path="/profile" element={<ProfilePage />} />
                 </Routes>
               </Layout>

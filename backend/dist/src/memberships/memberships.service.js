@@ -312,6 +312,237 @@ let MembershipsService = class MembershipsService {
             expiringThisWeek,
         };
     }
+    async validateMembership(membershipId) {
+        const membership = await this.prisma.membership.findUnique({
+            where: { id: membershipId },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                        email: true,
+                        phone: true,
+                        isActive: true,
+                        cedula: true,
+                        photo: true,
+                        holler: true,
+                    },
+                },
+                plan: {
+                    select: {
+                        name: true,
+                        duration: true,
+                    },
+                },
+            },
+        });
+        if (!membership) {
+            return {
+                isValid: false,
+                status: 'NOT_FOUND',
+                message: 'Membership not found',
+                membership: null,
+            };
+        }
+        const now = new Date();
+        const isExpired = membership.endDate < now;
+        const isSuspended = membership.status === 'SUSPENDED';
+        const isUserInactive = !membership.user.isActive;
+        let status;
+        let message;
+        let isValid;
+        if (isUserInactive) {
+            status = 'USER_INACTIVE';
+            message = 'User account is inactive';
+            isValid = false;
+        }
+        else if (isSuspended) {
+            status = 'SUSPENDED';
+            message = 'Membership is suspended';
+            isValid = false;
+        }
+        else if (isExpired) {
+            status = 'EXPIRED';
+            message = 'Membership has expired';
+            isValid = false;
+        }
+        else if (membership.status === 'ACTIVE') {
+            status = 'ACTIVE';
+            message = 'Membership is valid and active';
+            isValid = true;
+        }
+        else {
+            status = 'INACTIVE';
+            message = 'Membership is not active';
+            isValid = false;
+        }
+        const daysRemaining = isExpired ? 0 : Math.ceil((membership.endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+        return {
+            isValid,
+            status,
+            message,
+            membership: {
+                id: membership.id,
+                startDate: membership.startDate,
+                endDate: membership.endDate,
+                status: membership.status,
+                daysRemaining,
+                user: membership.user,
+                plan: membership.plan,
+            },
+        };
+    }
+    async validateMembershipByUserId(userId) {
+        const activeMembership = await this.prisma.membership.findFirst({
+            where: {
+                userId,
+                status: 'ACTIVE',
+            },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                        email: true,
+                        phone: true,
+                        isActive: true,
+                    },
+                },
+                plan: {
+                    select: {
+                        name: true,
+                        duration: true,
+                    },
+                },
+            },
+            orderBy: { endDate: 'desc' },
+        });
+        if (!activeMembership) {
+            return {
+                isValid: false,
+                status: 'NO_ACTIVE_MEMBERSHIP',
+                message: 'No active membership found for this user',
+                membership: null,
+            };
+        }
+        return this.validateMembership(activeMembership.id);
+    }
+    async validateMembershipByCedula(cedula) {
+        const user = await this.prisma.user.findUnique({
+            where: { cedula },
+            select: { id: true, isActive: true, firstName: true, lastName: true, cedula: true, photo: true },
+        });
+        if (!user) {
+            return {
+                isValid: false,
+                status: 'USER_NOT_FOUND',
+                message: 'Usuario no encontrado con esta cédula',
+                membership: null,
+            };
+        }
+        const activeMembership = await this.prisma.membership.findFirst({
+            where: {
+                userId: user.id,
+                status: 'ACTIVE',
+            },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                        email: true,
+                        phone: true,
+                        isActive: true,
+                        cedula: true,
+                        photo: true,
+                    },
+                },
+                plan: {
+                    select: {
+                        name: true,
+                        duration: true,
+                    },
+                },
+            },
+            orderBy: { endDate: 'desc' },
+        });
+        if (!activeMembership) {
+            return {
+                isValid: false,
+                status: 'NO_ACTIVE_MEMBERSHIP',
+                message: `${user.firstName} ${user.lastName} no tiene membresía activa`,
+                membership: null,
+                user: {
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    cedula: cedula,
+                },
+            };
+        }
+        const validation = await this.validateMembership(activeMembership.id);
+        return validation;
+    }
+    async validateMembershipByHoller(holler) {
+        const user = await this.prisma.user.findFirst({
+            where: { holler },
+            select: { id: true, isActive: true, firstName: true, lastName: true, cedula: true, photo: true },
+        });
+        if (!user) {
+            return {
+                isValid: false,
+                status: 'USER_NOT_FOUND',
+                message: 'Usuario no encontrado con este holler',
+                membership: null,
+            };
+        }
+        const activeMembership = await this.prisma.membership.findFirst({
+            where: {
+                userId: user.id,
+                status: 'ACTIVE',
+            },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                        email: true,
+                        phone: true,
+                        isActive: true,
+                        cedula: true,
+                        photo: true,
+                        holler: true,
+                    },
+                },
+                plan: {
+                    select: {
+                        name: true,
+                        duration: true,
+                    },
+                },
+            },
+            orderBy: { endDate: 'desc' },
+        });
+        if (!activeMembership) {
+            return {
+                isValid: false,
+                status: 'NO_ACTIVE_MEMBERSHIP',
+                message: `${user.firstName} ${user.lastName} no tiene membresía activa`,
+                membership: null,
+                user: {
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    cedula: user.cedula,
+                    photo: user.photo,
+                },
+            };
+        }
+        const validation = await this.validateMembership(activeMembership.id);
+        return validation;
+    }
 };
 exports.MembershipsService = MembershipsService;
 exports.MembershipsService = MembershipsService = __decorate([

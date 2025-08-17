@@ -79,6 +79,7 @@ let ReportsService = class ReportsService {
                     select: {
                         firstName: true,
                         lastName: true,
+                        cedula: true,
                         email: true,
                     },
                 },
@@ -121,6 +122,7 @@ let ReportsService = class ReportsService {
                         select: {
                             firstName: true,
                             lastName: true,
+                            cedula: true,
                             email: true,
                         },
                     },
@@ -179,6 +181,7 @@ let ReportsService = class ReportsService {
                             select: {
                                 firstName: true,
                                 lastName: true,
+                                cedula: true,
                             },
                         },
                     },

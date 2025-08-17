@@ -11,9 +11,12 @@ export declare class AuthController {
             email: string;
             firstName: string;
             lastName: string;
+            cedula: string;
             phone: string;
             role: string;
             avatar: string;
+            photo: string;
+            holler: string;
             isActive: boolean;
             createdAt: Date;
         };

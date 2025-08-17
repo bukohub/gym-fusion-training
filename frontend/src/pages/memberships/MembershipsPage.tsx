@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
+import { 
+  PencilIcon, 
+  TrashIcon, 
+  PauseIcon, 
+  PlayIcon,
+  CheckIcon,
+  XMarkIcon
+} from '@heroicons/react/24/outline';
 import Table, { TableColumn } from '../../components/ui/Table';
 import Modal from '../../components/ui/Modal';
 import Pagination from '../../components/ui/Pagination';
@@ -47,6 +55,7 @@ const MembershipsPage: React.FC = () => {
     } else {
       loadMemberships();
       loadUsers();
+      loadPlans(); // Also load plans for the membership creation dropdown
     }
   }, [activeTab, pagination.page]);
 
@@ -86,7 +95,7 @@ const MembershipsPage: React.FC = () => {
 
   const loadUsers = async () => {
     try {
-      const response = await usersApi.getClients();
+      const response = await usersApi.getAll(1, 100, 'CLIENT');
       setUsers(response.data.users);
     } catch (error) {
       toast.error('Failed to load users');
@@ -213,36 +222,38 @@ const MembershipsPage: React.FC = () => {
 
   // Table columns
   const planColumns: TableColumn<MembershipPlan>[] = [
-    { key: 'name', label: 'Name', sortable: true },
-    { key: 'duration', label: 'Duration (days)', sortable: true },
-    { key: 'price', label: 'Price', render: (value) => `$${value}`, sortable: true },
+    { key: 'name', label: 'Nombre', sortable: true },
+    { key: 'duration', label: 'Duración (días)', sortable: true },
+    { key: 'price', label: 'Precio', render: (value) => `$${value}`, sortable: true },
     {
       key: 'isActive',
-      label: 'Status',
+      label: 'Estado',
       render: (value) => (
         <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
           value ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
         }`}>
-          {value ? 'Active' : 'Inactive'}
+          {value ? 'Activo' : 'Inactivo'}
         </span>
       ),
     },
     {
       key: 'id',
-      label: 'Actions',
+      label: 'Acciones',
       render: (_, item) => (
-        <div className="flex space-x-2">
+        <div className="flex space-x-1">
           <button
             onClick={() => openEditModal(item)}
-            className="text-indigo-600 hover:text-indigo-900 text-sm"
+            className="p-2 text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50 rounded-md transition-colors"
+            title="Editar plan"
           >
-            Edit
+            <PencilIcon className="w-4 h-4" />
           </button>
           <button
             onClick={() => handleDeletePlan(item.id)}
-            className="text-red-600 hover:text-red-900 text-sm"
+            className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-md transition-colors"
+            title="Eliminar plan"
           >
-            Delete
+            <TrashIcon className="w-4 h-4" />
           </button>
         </div>
       ),
@@ -252,7 +263,7 @@ const MembershipsPage: React.FC = () => {
   const membershipColumns: TableColumn<Membership>[] = [
     {
       key: 'user',
-      label: 'Member',
+      label: 'Miembro',
       render: (user) => user ? `${user.firstName} ${user.lastName}` : 'N/A',
     },
     {
@@ -260,11 +271,11 @@ const MembershipsPage: React.FC = () => {
       label: 'Plan',
       render: (plan) => plan?.name || 'N/A',
     },
-    { key: 'startDate', label: 'Start Date', render: (value) => new Date(value).toLocaleDateString() },
-    { key: 'endDate', label: 'End Date', render: (value) => new Date(value).toLocaleDateString() },
+    { key: 'startDate', label: 'Fecha Inicio', render: (value) => new Date(value).toLocaleDateString() },
+    { key: 'endDate', label: 'Fecha Fin', render: (value) => new Date(value).toLocaleDateString() },
     {
       key: 'status',
-      label: 'Status',
+      label: 'Estado',
       render: (value) => (
         <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
           value === 'ACTIVE' ? 'bg-green-100 text-green-800' :
@@ -277,22 +288,24 @@ const MembershipsPage: React.FC = () => {
     },
     {
       key: 'id',
-      label: 'Actions',
+      label: 'Acciones',
       render: (_, item) => (
-        <div className="flex space-x-2">
+        <div className="flex space-x-1">
           {item.status === 'ACTIVE' ? (
             <button
               onClick={() => handleSuspendMembership(item.id)}
-              className="text-yellow-600 hover:text-yellow-900 text-sm"
+              className="p-2 text-yellow-600 hover:text-yellow-900 hover:bg-yellow-50 rounded-md transition-colors"
+              title="Suspender membresía"
             >
-              Suspend
+              <PauseIcon className="w-4 h-4" />
             </button>
           ) : (
             <button
               onClick={() => handleReactivateMembership(item.id)}
-              className="text-green-600 hover:text-green-900 text-sm"
+              className="p-2 text-green-600 hover:text-green-900 hover:bg-green-50 rounded-md transition-colors"
+              title="Reactivar membresía"
             >
-              Reactivate
+              <PlayIcon className="w-4 h-4" />
             </button>
           )}
         </div>
@@ -308,7 +321,7 @@ const MembershipsPage: React.FC = () => {
           onClick={() => openCreateModal(activeTab)}
           className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium"
         >
-          {activeTab === 'plans' ? 'Add Plan' : 'Add Membership'}
+          {activeTab === 'plans' ? 'Agregar Plan' : 'Agregar Membresía'}
         </button>
       </div>
 
@@ -316,8 +329,8 @@ const MembershipsPage: React.FC = () => {
       <div className="border-b border-gray-200">
         <nav className="-mb-px flex space-x-8">
           {[
-            { key: 'plans', label: 'Membership Plans' },
-            { key: 'memberships', label: 'Active Memberships' },
+            { key: 'plans', label: 'Planes de Membresía' },
+            { key: 'memberships', label: 'Membresías Activas' },
           ].map((tab) => (
             <button
               key={tab.key}
@@ -340,14 +353,14 @@ const MembershipsPage: React.FC = () => {
           data={plans}
           columns={planColumns}
           loading={loading}
-          emptyMessage="No membership plans found"
+          emptyMessage="No se encontraron planes de membresía"
         />
       ) : (
         <Table
           data={memberships}
           columns={membershipColumns}
           loading={loading}
-          emptyMessage="No memberships found"
+          emptyMessage="No se encontraron membresías"
         />
       )}
 
@@ -365,13 +378,13 @@ const MembershipsPage: React.FC = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={`${modalType === 'create' ? 'Create' : 'Edit'} ${activeTab === 'plans' ? 'Plan' : 'Membership'}`}
+        title={`${modalType === 'create' ? 'Crear' : 'Editar'} ${activeTab === 'plans' ? 'Plan' : 'Membresía'}`}
         size="md"
       >
         {activeTab === 'plans' ? (
           <form onSubmit={modalType === 'create' ? handleCreatePlan : handleUpdatePlan} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Name</label>
+              <label className="block text-sm font-medium text-gray-700">Nombre</label>
               <input
                 type="text"
                 value={planForm.name}
@@ -381,7 +394,7 @@ const MembershipsPage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Description</label>
+              <label className="block text-sm font-medium text-gray-700">Descripción</label>
               <textarea
                 value={planForm.description}
                 onChange={(e) => setPlanForm(prev => ({ ...prev, description: e.target.value }))}
@@ -390,7 +403,7 @@ const MembershipsPage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Duration (days)</label>
+              <label className="block text-sm font-medium text-gray-700">Duración (días)</label>
               <input
                 type="number"
                 value={planForm.duration}
@@ -401,7 +414,7 @@ const MembershipsPage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Price ($)</label>
+              <label className="block text-sm font-medium text-gray-700">Precio ($)</label>
               <input
                 type="number"
                 step="0.01"
@@ -416,22 +429,24 @@ const MembershipsPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
-                Cancel
+                <XMarkIcon className="w-4 h-4 mr-2" />
+                Cancelar
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+                className="flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
               >
-                {modalType === 'create' ? 'Create' : 'Update'}
+                <CheckIcon className="w-4 h-4 mr-2" />
+                {modalType === 'create' ? 'Crear' : 'Actualizar'}
               </button>
             </div>
           </form>
         ) : (
           <form onSubmit={handleCreateMembership} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Member</label>
+              <label className="block text-sm font-medium text-gray-700">Miembro</label>
               <select
                 value={membershipForm.userId}
                 onChange={(e) => setMembershipForm(prev => ({ ...prev, userId: e.target.value }))}
@@ -476,15 +491,17 @@ const MembershipsPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
-                Cancel
+                <XMarkIcon className="w-4 h-4 mr-2" />
+                Cancelar
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+                className="flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
               >
-                Create Membership
+                <CheckIcon className="w-4 h-4 mr-2" />
+                Crear Membresía
               </button>
             </div>
           </form>

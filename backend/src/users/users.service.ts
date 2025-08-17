@@ -18,7 +18,14 @@ export class UsersService {
       throw new ConflictException('User with this email already exists');
     }
 
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 12);
+    // For clients, password can be empty - generate a default one
+    let password = createUserDto.password;
+    if (!password && createUserDto.role === Role.CLIENT) {
+      // Generate a default password based on cedula for clients
+      password = `gym${createUserDto.cedula}`;
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 12);
 
     return this.prisma.user.create({
       data: {
@@ -30,9 +37,12 @@ export class UsersService {
         email: true,
         firstName: true,
         lastName: true,
+        cedula: true,
         phone: true,
         role: true,
         avatar: true,
+        photo: true,
+        holler: true,
         isActive: true,
         createdAt: true,
         updatedAt: true,
@@ -62,9 +72,12 @@ export class UsersService {
           email: true,
           firstName: true,
           lastName: true,
+          cedula: true,
           phone: true,
           role: true,
           avatar: true,
+          photo: true,
+          holler: true,
           isActive: true,
           lastLogin: true,
           createdAt: true,
@@ -95,9 +108,12 @@ export class UsersService {
         email: true,
         firstName: true,
         lastName: true,
+        cedula: true,
         phone: true,
         role: true,
         avatar: true,
+        photo: true,
+        holler: true,
         isActive: true,
         emailVerified: true,
         lastLogin: true,
@@ -173,9 +189,12 @@ export class UsersService {
         email: true,
         firstName: true,
         lastName: true,
+        cedula: true,
         phone: true,
         role: true,
         avatar: true,
+        photo: true,
+        holler: true,
         isActive: true,
         emailVerified: true,
         updatedAt: true,
@@ -216,6 +235,9 @@ export class UsersService {
         email: true,
         firstName: true,
         lastName: true,
+        cedula: true,
+        photo: true,
+        holler: true,
         isActive: true,
       },
     });
@@ -238,6 +260,9 @@ export class UsersService {
         email: true,
         firstName: true,
         lastName: true,
+        cedula: true,
+        photo: true,
+        holler: true,
         isActive: true,
       },
     });

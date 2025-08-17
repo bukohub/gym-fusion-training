@@ -10,9 +10,12 @@ export declare class UsersService {
         email: string;
         firstName: string;
         lastName: string;
+        cedula: string;
         phone: string;
         role: string;
         avatar: string;
+        photo: string;
+        holler: string;
         isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
@@ -23,9 +26,12 @@ export declare class UsersService {
             email: string;
             firstName: string;
             lastName: string;
+            cedula: string;
             phone: string;
             role: string;
             avatar: string;
+            photo: string;
+            holler: string;
             isActive: boolean;
             lastLogin: Date;
             createdAt: Date;
@@ -42,9 +48,12 @@ export declare class UsersService {
         email: string;
         firstName: string;
         lastName: string;
+        cedula: string;
         phone: string;
         role: string;
         avatar: string;
+        photo: string;
+        holler: string;
         isActive: boolean;
         emailVerified: boolean;
         lastLogin: Date;
@@ -65,23 +74,23 @@ export declare class UsersService {
             id: string;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
+            planId: string;
             startDate: Date;
             endDate: Date;
             status: string;
-            userId: string;
-            planId: string;
         })[];
         payments: {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            description: string | null;
-            status: string;
             userId: string;
+            status: string;
+            membershipId: string | null;
             amount: number;
             method: string;
+            description: string | null;
             transactionId: string | null;
-            membershipId: string | null;
         }[];
         bookedClasses: ({
             class: {
@@ -94,12 +103,12 @@ export declare class UsersService {
                 createdAt: Date;
                 updatedAt: Date;
                 name: string;
-                description: string | null;
                 status: string;
+                description: string | null;
+                trainerId: string;
                 startTime: Date;
                 endTime: Date;
                 maxCapacity: number;
-                trainerId: string;
             };
         } & {
             id: string;
@@ -116,9 +125,12 @@ export declare class UsersService {
         email: string;
         firstName: string;
         lastName: string;
+        cedula: string;
         phone: string;
         role: string;
         avatar: string;
+        photo: string;
+        holler: string;
         isActive: boolean;
         emailVerified: boolean;
         updatedAt: Date;
@@ -131,6 +143,9 @@ export declare class UsersService {
         email: string;
         firstName: string;
         lastName: string;
+        cedula: string;
+        photo: string;
+        holler: string;
         isActive: boolean;
     }>;
     activate(id: string): Promise<{
@@ -138,6 +153,9 @@ export declare class UsersService {
         email: string;
         firstName: string;
         lastName: string;
+        cedula: string;
+        photo: string;
+        holler: string;
         isActive: boolean;
     }>;
     getUserStats(): Promise<{

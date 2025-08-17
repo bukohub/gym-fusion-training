@@ -1,9 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-hot-toast';
+import { 
+  PencilIcon, 
+  TrashIcon, 
+  CheckIcon, 
+  XMarkIcon, 
+  ArrowPathIcon,
+  EyeSlashIcon,
+  EyeIcon
+} from '@heroicons/react/24/outline';
 import Table, { TableColumn } from '../../components/ui/Table';
 import Modal from '../../components/ui/Modal';
 import Pagination from '../../components/ui/Pagination';
+import PhotoCapture from '../../components/ui/PhotoCapture';
 import { usersApi } from '../../services/users';
+import { uploadsApi } from '../../services/uploads';
 import { User, Role } from '../../types';
 
 const UsersPage: React.FC = () => {
@@ -34,18 +45,28 @@ const UsersPage: React.FC = () => {
     email: '',
     firstName: '',
     lastName: '',
+    cedula: '',
     phone: '',
     role: 'CLIENT' as keyof typeof Role,
     password: '',
+    photo: '',
+    holler: '',
     isActive: true,
   });
 
-  // Load data
-  useEffect(() => {
-    loadUsers();
-  }, [pagination.page, filters]);
+  // Debounced search state
+  const [debouncedSearch, setDebouncedSearch] = useState(filters.search);
 
-  const loadUsers = async () => {
+  // Debounce search input
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setDebouncedSearch(filters.search);
+    }, 500); // 500ms delay
+
+    return () => clearTimeout(timeoutId);
+  }, [filters.search]);
+
+  const loadUsers = useCallback(async () => {
     try {
       setLoading(true);
       const response = await usersApi.getAll(
@@ -53,7 +74,7 @@ const UsersPage: React.FC = () => {
         pagination.limit,
         filters.role || undefined,
         filters.isActive === '' ? undefined : filters.isActive === 'true',
-        filters.search || undefined
+        debouncedSearch || undefined
       );
       setUsers(response.data.users);
       setPagination(prev => ({
@@ -62,7 +83,7 @@ const UsersPage: React.FC = () => {
         totalPages: response.data.pagination.totalPages,
       }));
     } catch (error) {
-      toast.error('Failed to load users');
+      toast.error('Error al cargar usuarios');
     } finally {
       setLoading(false);
     }
@@ -72,13 +93,19 @@ const UsersPage: React.FC = () => {
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await usersApi.create(userForm);
-      toast.success('User created successfully');
+      // For clients, don't send password if it's empty
+      const userData = { ...userForm };
+      if (userData.role === 'CLIENT' && !userData.password) {
+        delete userData.password;
+      }
+      
+      await usersApi.create(userData);
+      toast.success('Usuario creado exitosamente');
       setIsModalOpen(false);
       loadUsers();
       resetUserForm();
     } catch (error) {
-      toast.error('Failed to create user');
+      toast.error('Error al crear usuario');
     }
   };
 
@@ -88,23 +115,23 @@ const UsersPage: React.FC = () => {
     try {
       const { password, ...updateData } = userForm;
       await usersApi.update(selectedUser.id, updateData);
-      toast.success('User updated successfully');
+      toast.success('Usuario actualizado exitosamente');
       setIsModalOpen(false);
       loadUsers();
       resetUserForm();
     } catch (error) {
-      toast.error('Failed to update user');
+      toast.error('Error al actualizar usuario');
     }
   };
 
   const handleDeleteUser = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this user?')) {
+    if (window.confirm('¿Está seguro de que desea eliminar este usuario?')) {
       try {
         await usersApi.delete(id);
-        toast.success('User deleted successfully');
+        toast.success('Usuario eliminado exitosamente');
         loadUsers();
       } catch (error) {
-        toast.error('Failed to delete user');
+        toast.error('Error al eliminar usuario');
       }
     }
   };
@@ -112,30 +139,30 @@ const UsersPage: React.FC = () => {
   const handleActivateUser = async (id: string) => {
     try {
       await usersApi.activate(id);
-      toast.success('User activated successfully');
+      toast.success('Usuario activado exitosamente');
       loadUsers();
     } catch (error) {
-      toast.error('Failed to activate user');
+      toast.error('Error al activar usuario');
     }
   };
 
   const handleDeactivateUser = async (id: string) => {
     try {
       await usersApi.deactivate(id);
-      toast.success('User deactivated successfully');
+      toast.success('Usuario desactivado exitosamente');
       loadUsers();
     } catch (error) {
-      toast.error('Failed to deactivate user');
+      toast.error('Error al desactivar usuario');
     }
   };
 
   const handleResetPassword = async (id: string) => {
-    if (window.confirm('Are you sure you want to reset this user\'s password?')) {
+    if (window.confirm('¿Está seguro de que desea restablecer la contraseña de este usuario?')) {
       try {
         await usersApi.resetPassword(id);
-        toast.success('Password reset email sent successfully');
+        toast.success('Correo de restablecimiento de contraseña enviado exitosamente');
       } catch (error) {
-        toast.error('Failed to reset password');
+        toast.error('Error al restablecer contraseña');
       }
     }
   };
@@ -146,9 +173,12 @@ const UsersPage: React.FC = () => {
       email: '',
       firstName: '',
       lastName: '',
+      cedula: '',
       phone: '',
       role: 'CLIENT',
       password: '',
+      photo: '',
+      holler: '',
       isActive: true,
     });
   };
@@ -167,9 +197,12 @@ const UsersPage: React.FC = () => {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
+      cedula: user.cedula,
       phone: user.phone || '',
       role: user.role as keyof typeof Role,
       password: '',
+      photo: user.photo || '',
+      holler: user.holler || '',
       isActive: user.isActive,
     });
     setIsModalOpen(true);
@@ -178,89 +211,125 @@ const UsersPage: React.FC = () => {
   // Table columns
   const userColumns: TableColumn<User>[] = [
     {
+      key: 'photo',
+      label: 'Foto',
+      render: (_, item) => (
+        <div className="flex items-center">
+          {item.photo ? (
+            <img
+              src={uploadsApi.getPhotoUrl(item.photo)}
+              alt={`${item.firstName} ${item.lastName}`}
+              className="w-10 h-10 rounded-full object-cover"
+            />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
+              <span className="text-gray-600 text-xs">
+                {item.firstName.charAt(0)}{item.lastName.charAt(0)}
+              </span>
+            </div>
+          )}
+        </div>
+      ),
+    },
+    {
       key: 'firstName',
-      label: 'Name',
+      label: 'Nombre',
       render: (_, item) => `${item.firstName} ${item.lastName}`,
       sortable: true,
     },
+    { key: 'cedula', label: 'Cédula', sortable: true },
+    { key: 'holler', label: 'Holler', render: (value) => value || 'N/A' },
     { key: 'email', label: 'Email', sortable: true },
-    { key: 'phone', label: 'Phone' },
+    { key: 'phone', label: 'Teléfono' },
     {
       key: 'role',
-      label: 'Role',
-      render: (value) => (
-        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-          value === 'ADMIN' ? 'bg-purple-100 text-purple-800' :
-          value === 'RECEPTIONIST' ? 'bg-blue-100 text-blue-800' :
-          value === 'TRAINER' ? 'bg-green-100 text-green-800' :
-          'bg-gray-100 text-gray-800'
-        }`}>
-          {value}
-        </span>
-      ),
+      label: 'Rol',
+      render: (value) => {
+        const roleTranslations = {
+          'ADMIN': 'Administrador',
+          'RECEPTIONIST': 'Recepcionista',
+          'TRAINER': 'Entrenador',
+          'CLIENT': 'Cliente'
+        };
+        return (
+          <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+            value === 'ADMIN' ? 'bg-purple-100 text-purple-800' :
+            value === 'RECEPTIONIST' ? 'bg-blue-100 text-blue-800' :
+            value === 'TRAINER' ? 'bg-green-100 text-green-800' :
+            'bg-gray-100 text-gray-800'
+          }`}>
+            {roleTranslations[value as keyof typeof roleTranslations] || value}
+          </span>
+        );
+      },
       sortable: true,
     },
     {
       key: 'isActive',
-      label: 'Status',
+      label: 'Estado',
       render: (value) => (
         <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
           value ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
         }`}>
-          {value ? 'Active' : 'Inactive'}
+          {value ? 'Activo' : 'Inactivo'}
         </span>
       ),
       sortable: true,
     },
     {
       key: 'lastLogin',
-      label: 'Last Login',
-      render: (value) => value ? new Date(value).toLocaleDateString() : 'Never',
+      label: 'Último Acceso',
+      render: (value) => value ? new Date(value).toLocaleDateString() : 'Nunca',
       sortable: true,
     },
     {
       key: 'createdAt',
-      label: 'Created',
+      label: 'Creado',
       render: (value) => new Date(value).toLocaleDateString(),
       sortable: true,
     },
     {
       key: 'id',
-      label: 'Actions',
+      label: 'Acciones',
       render: (_, item) => (
-        <div className="flex space-x-2">
+        <div className="flex space-x-1">
           <button
             onClick={() => openEditModal(item)}
-            className="text-indigo-600 hover:text-indigo-900 text-sm"
+            className="p-2 text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50 rounded-md transition-colors"
+            title="Editar usuario"
           >
-            Edit
+            <PencilIcon className="w-4 h-4" />
           </button>
           {item.isActive ? (
             <button
               onClick={() => handleDeactivateUser(item.id)}
-              className="text-yellow-600 hover:text-yellow-900 text-sm"
+              className="p-2 text-yellow-600 hover:text-yellow-900 hover:bg-yellow-50 rounded-md transition-colors"
+              title="Desactivar usuario"
             >
-              Deactivate
+              <EyeSlashIcon className="w-4 h-4" />
             </button>
           ) : (
             <button
               onClick={() => handleActivateUser(item.id)}
-              className="text-green-600 hover:text-green-900 text-sm"
+              className="p-2 text-green-600 hover:text-green-900 hover:bg-green-50 rounded-md transition-colors"
+              title="Activar usuario"
             >
-              Activate
+              <EyeIcon className="w-4 h-4" />
             </button>
           )}
           <button
             onClick={() => handleResetPassword(item.id)}
-            className="text-blue-600 hover:text-blue-900 text-sm"
+            className="p-2 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-md transition-colors"
+            title="Restablecer contraseña"
           >
-            Reset PW
+            <ArrowPathIcon className="w-4 h-4" />
           </button>
           <button
             onClick={() => handleDeleteUser(item.id)}
-            className="text-red-600 hover:text-red-900 text-sm"
+            className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-md transition-colors"
+            title="Eliminar usuario"
           >
-            Delete
+            <TrashIcon className="w-4 h-4" />
           </button>
         </div>
       ),
@@ -270,12 +339,12 @@ const UsersPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Gestión de Usuarios</h1>
         <button
           onClick={openCreateModal}
           className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium"
         >
-          Add User
+          Agregar Usuario
         </button>
       </div>
 
@@ -283,38 +352,38 @@ const UsersPage: React.FC = () => {
       <div className="bg-white p-4 rounded-lg shadow space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Role</label>
+            <label className="block text-sm font-medium text-gray-700">Rol</label>
             <select
               value={filters.role}
               onChange={(e) => setFilters(prev => ({ ...prev, role: e.target.value }))}
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
             >
-              <option value="">All Roles</option>
-              <option value="ADMIN">Admin</option>
-              <option value="RECEPTIONIST">Receptionist</option>
-              <option value="TRAINER">Trainer</option>
-              <option value="CLIENT">Client</option>
+              <option value="">Todos los Roles</option>
+              <option value="ADMIN">Administrador</option>
+              <option value="RECEPTIONIST">Recepcionista</option>
+              <option value="TRAINER">Entrenador</option>
+              <option value="CLIENT">Cliente</option>
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Status</label>
+            <label className="block text-sm font-medium text-gray-700">Estado</label>
             <select
               value={filters.isActive}
               onChange={(e) => setFilters(prev => ({ ...prev, isActive: e.target.value }))}
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
             >
-              <option value="">All Statuses</option>
-              <option value="true">Active</option>
-              <option value="false">Inactive</option>
+              <option value="">Todos los Estados</option>
+              <option value="true">Activo</option>
+              <option value="false">Inactivo</option>
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Search</label>
+            <label className="block text-sm font-medium text-gray-700">Buscar</label>
             <input
               type="text"
               value={filters.search}
               onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-              placeholder="Search by name or email..."
+              placeholder="Buscar por nombre, cédula o email..."
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
@@ -326,7 +395,7 @@ const UsersPage: React.FC = () => {
         data={users}
         columns={userColumns}
         loading={loading}
-        emptyMessage="No users found"
+        emptyMessage="No se encontraron usuarios"
       />
 
       {/* Pagination */}
@@ -343,13 +412,13 @@ const UsersPage: React.FC = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={modalType === 'create' ? 'Create User' : 'Edit User'}
+        title={modalType === 'create' ? 'Crear Usuario' : 'Editar Usuario'}
         size="md"
       >
         <form onSubmit={modalType === 'create' ? handleCreateUser : handleUpdateUser} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">First Name</label>
+              <label className="block text-sm font-medium text-gray-700">Nombre</label>
               <input
                 type="text"
                 value={userForm.firstName}
@@ -359,7 +428,7 @@ const UsersPage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Last Name</label>
+              <label className="block text-sm font-medium text-gray-700">Apellido</label>
               <input
                 type="text"
                 value={userForm.lastName}
@@ -369,38 +438,73 @@ const UsersPage: React.FC = () => {
               />
             </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
-            <input
-              type="email"
-              value={userForm.email}
-              onChange={(e) => setUserForm(prev => ({ ...prev, email: e.target.value }))}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-              required
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Cédula</label>
+              <input
+                type="text"
+                value={userForm.cedula}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, ''); // Only numbers
+                  setUserForm(prev => ({ ...prev, cedula: value }));
+                }}
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="12345678"
+                maxLength={10}
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Email</label>
+              <input
+                type="email"
+                value={userForm.email}
+                onChange={(e) => setUserForm(prev => ({ ...prev, email: e.target.value }))}
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                required
+              />
+            </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Phone</label>
+            <label className="block text-sm font-medium text-gray-700">Teléfono</label>
             <input
               type="tel"
               value={userForm.phone}
               onChange={(e) => setUserForm(prev => ({ ...prev, phone: e.target.value }))}
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+              placeholder="+57 300 123 4567"
             />
+          </div>
+          <div className="grid grid-cols-1 gap-6">
+            <PhotoCapture
+              currentPhoto={userForm.photo}
+              onPhotoChange={(filename) => setUserForm(prev => ({ ...prev, photo: filename }))}
+              userName={`${userForm.firstName} ${userForm.lastName}`.trim()}
+            />
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Código Holler</label>
+              <input
+                type="text"
+                value={userForm.holler}
+                onChange={(e) => setUserForm(prev => ({ ...prev, holler: e.target.value.toUpperCase() }))}
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="HOLLER123"
+              />
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Role</label>
+              <label className="block text-sm font-medium text-gray-700">Rol</label>
               <select
                 value={userForm.role}
                 onChange={(e) => setUserForm(prev => ({ ...prev, role: e.target.value as keyof typeof Role }))}
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                 required
               >
-                <option value="CLIENT">Client</option>
-                <option value="TRAINER">Trainer</option>
-                <option value="RECEPTIONIST">Receptionist</option>
-                <option value="ADMIN">Admin</option>
+                <option value="CLIENT">Cliente</option>
+                <option value="TRAINER">Entrenador</option>
+                <option value="RECEPTIONIST">Recepcionista</option>
+                <option value="ADMIN">Administrador</option>
               </select>
             </div>
             <div className="flex items-end">
@@ -411,13 +515,13 @@ const UsersPage: React.FC = () => {
                   onChange={(e) => setUserForm(prev => ({ ...prev, isActive: e.target.checked }))}
                   className="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 />
-                <span className="ml-2 text-sm text-gray-700">Active</span>
+                <span className="ml-2 text-sm text-gray-700">Activo</span>
               </label>
             </div>
           </div>
-          {modalType === 'create' && (
+          {modalType === 'create' && userForm.role !== 'CLIENT' && (
             <div>
-              <label className="block text-sm font-medium text-gray-700">Password</label>
+              <label className="block text-sm font-medium text-gray-700">Contraseña</label>
               <input
                 type="password"
                 value={userForm.password}
@@ -425,7 +529,7 @@ const UsersPage: React.FC = () => {
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                 required
                 minLength={6}
-                placeholder="Minimum 6 characters"
+                placeholder="Mínimo 6 caracteres"
               />
             </div>
           )}
@@ -433,15 +537,17 @@ const UsersPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
-              Cancel
+              <XMarkIcon className="w-4 h-4 mr-2" />
+              Cancelar
             </button>
             <button
               type="submit"
-              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+              className="flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
             >
-              {modalType === 'create' ? 'Create User' : 'Update User'}
+              <CheckIcon className="w-4 h-4 mr-2" />
+              {modalType === 'create' ? 'Crear Usuario' : 'Actualizar Usuario'}
             </button>
           </div>
         </form>

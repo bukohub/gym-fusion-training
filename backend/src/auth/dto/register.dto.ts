@@ -20,6 +20,10 @@ export class RegisterDto {
   @IsString()
   lastName: string;
 
+  @ApiProperty({ example: '12345678' })
+  @IsString()
+  cedula: string;
+
   @ApiProperty({ example: '+1234567890', required: false })
   @IsOptional()
   @IsString()
@@ -34,4 +38,14 @@ export class RegisterDto {
   @IsOptional()
   @IsString()
   role?: Role;
+
+  @ApiProperty({ example: '/uploads/photos/user.jpg', required: false })
+  @IsOptional()
+  @IsString()
+  photo?: string;
+
+  @ApiProperty({ example: 'HOLLER12345', required: false })
+  @IsOptional()
+  @IsString()
+  holler?: string;
 }

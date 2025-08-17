@@ -30,6 +30,7 @@ let PaymentsService = class PaymentsService {
                         firstName: true,
                         lastName: true,
                         email: true,
+                        cedula: true,
                     },
                 },
                 membership: {
@@ -101,6 +102,7 @@ let PaymentsService = class PaymentsService {
                         lastName: true,
                         email: true,
                         phone: true,
+                        cedula: true,
                     },
                 },
                 membership: {
@@ -133,6 +135,7 @@ let PaymentsService = class PaymentsService {
                         firstName: true,
                         lastName: true,
                         email: true,
+                        cedula: true,
                     },
                 },
                 membership: {

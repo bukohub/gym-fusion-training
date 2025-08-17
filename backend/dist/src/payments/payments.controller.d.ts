@@ -8,6 +8,7 @@ export declare class PaymentsController {
         user: {
             id: string;
             email: string;
+            cedula: string;
             firstName: string;
             lastName: string;
         };
@@ -109,6 +110,7 @@ export declare class PaymentsController {
         user: {
             id: string;
             email: string;
+            cedula: string;
             firstName: string;
             lastName: string;
             phone: string;
@@ -159,6 +161,7 @@ export declare class PaymentsController {
         user: {
             id: string;
             email: string;
+            cedula: string;
             firstName: string;
             lastName: string;
         };
@@ -202,6 +205,7 @@ export declare class PaymentsController {
         user: {
             id: string;
             email: string;
+            cedula: string;
             firstName: string;
             lastName: string;
         };
@@ -242,6 +246,7 @@ export declare class PaymentsController {
         user: {
             id: string;
             email: string;
+            cedula: string;
             firstName: string;
             lastName: string;
         };
@@ -282,6 +287,7 @@ export declare class PaymentsController {
         user: {
             id: string;
             email: string;
+            cedula: string;
             firstName: string;
             lastName: string;
         };

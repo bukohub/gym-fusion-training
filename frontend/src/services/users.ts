@@ -5,18 +5,24 @@ export interface CreateUserDto {
   email: string;
   firstName: string;
   lastName: string;
+  cedula: string;
   phone?: string;
   role: string;
   password: string;
+  photo?: string;
+  holler?: string;
 }
 
 export interface UpdateUserDto {
   email?: string;
   firstName?: string;
   lastName?: string;
+  cedula?: string;
   phone?: string;
   role?: string;
   isActive?: boolean;
+  photo?: string;
+  holler?: string;
 }
 
 export const usersApi = {

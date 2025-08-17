@@ -25,7 +25,11 @@ let UsersService = class UsersService {
         if (existingUser) {
             throw new common_1.ConflictException('User with this email already exists');
         }
-        const hashedPassword = await bcrypt.hash(createUserDto.password, 12);
+        let password = createUserDto.password;
+        if (!password && createUserDto.role === roles_1.Role.CLIENT) {
+            password = `gym${createUserDto.cedula}`;
+        }
+        const hashedPassword = await bcrypt.hash(password, 12);
         return this.prisma.user.create({
             data: {
                 ...createUserDto,
@@ -36,9 +40,12 @@ let UsersService = class UsersService {
                 email: true,
                 firstName: true,
                 lastName: true,
+                cedula: true,
                 phone: true,
                 role: true,
                 avatar: true,
+                photo: true,
+                holler: true,
                 isActive: true,
                 createdAt: true,
                 updatedAt: true,
@@ -65,9 +72,12 @@ let UsersService = class UsersService {
                     email: true,
                     firstName: true,
                     lastName: true,
+                    cedula: true,
                     phone: true,
                     role: true,
                     avatar: true,
+                    photo: true,
+                    holler: true,
                     isActive: true,
                     lastLogin: true,
                     createdAt: true,
@@ -96,9 +106,12 @@ let UsersService = class UsersService {
                 email: true,
                 firstName: true,
                 lastName: true,
+                cedula: true,
                 phone: true,
                 role: true,
                 avatar: true,
+                photo: true,
+                holler: true,
                 isActive: true,
                 emailVerified: true,
                 lastLogin: true,
@@ -165,9 +178,12 @@ let UsersService = class UsersService {
                 email: true,
                 firstName: true,
                 lastName: true,
+                cedula: true,
                 phone: true,
                 role: true,
                 avatar: true,
+                photo: true,
+                holler: true,
                 isActive: true,
                 emailVerified: true,
                 updatedAt: true,
@@ -201,6 +217,9 @@ let UsersService = class UsersService {
                 email: true,
                 firstName: true,
                 lastName: true,
+                cedula: true,
+                photo: true,
+                holler: true,
                 isActive: true,
             },
         });
@@ -220,6 +239,9 @@ let UsersService = class UsersService {
                 email: true,
                 firstName: true,
                 lastName: true,
+                cedula: true,
+                photo: true,
+                holler: true,
                 isActive: true,
             },
         });

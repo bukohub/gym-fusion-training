@@ -7,10 +7,11 @@ export class CreateUserDto {
   @IsEmail()
   email: string;
 
-  @ApiProperty({ example: 'password123', minLength: 6 })
+  @ApiProperty({ example: 'password123', minLength: 6, required: false })
+  @IsOptional()
   @IsString()
   @MinLength(6)
-  password: string;
+  password?: string;
 
   @ApiProperty({ example: 'John' })
   @IsString()
@@ -19,6 +20,10 @@ export class CreateUserDto {
   @ApiProperty({ example: 'Doe' })
   @IsString()
   lastName: string;
+
+  @ApiProperty({ example: '12345678' })
+  @IsString()
+  cedula: string;
 
   @ApiProperty({ example: '+1234567890', required: false })
   @IsOptional()
@@ -33,4 +38,14 @@ export class CreateUserDto {
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
+
+  @ApiProperty({ example: '/uploads/photos/user.jpg', required: false })
+  @IsOptional()
+  @IsString()
+  photo?: string;
+
+  @ApiProperty({ example: 'HOLLER12345', required: false })
+  @IsOptional()
+  @IsString()
+  holler?: string;
 }

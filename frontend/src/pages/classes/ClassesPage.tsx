@@ -234,31 +234,31 @@ const ClassesPage: React.FC = () => {
 
   // Table columns
   const classColumns: TableColumn<Class>[] = [
-    { key: 'name', label: 'Class Name', sortable: true },
+    { key: 'name', label: 'Nombre de Clase', sortable: true },
     {
       key: 'trainer',
-      label: 'Trainer',
+      label: 'Entrenador',
       render: (trainer) => trainer ? `${trainer.firstName} ${trainer.lastName}` : 'N/A',
     },
     {
       key: 'startTime',
-      label: 'Start Time',
+      label: 'Hora Inicio',
       render: (value) => new Date(value).toLocaleString(),
       sortable: true,
     },
     {
       key: 'endTime',
-      label: 'End Time',
+      label: 'Hora Fin',
       render: (value) => new Date(value).toLocaleString(),
     },
     {
       key: 'maxCapacity',
-      label: 'Capacity',
+      label: 'Capacidad',
       render: (_, item) => `${item.bookings?.length || 0}/${item.maxCapacity}`,
     },
     {
       key: 'status',
-      label: 'Status',
+      label: 'Estado',
       render: (value) => (
         <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
           value === 'SCHEDULED' ? 'bg-blue-100 text-blue-800' :
@@ -405,14 +405,14 @@ const ClassesPage: React.FC = () => {
           data={classes}
           columns={classColumns}
           loading={loading}
-          emptyMessage="No classes found"
+          emptyMessage="No se encontraron clases"
         />
       ) : (
         <Table
           data={bookings}
           columns={bookingColumns}
           loading={loading}
-          emptyMessage="No bookings found"
+          emptyMessage="No se encontraron reservas"
         />
       )}
 

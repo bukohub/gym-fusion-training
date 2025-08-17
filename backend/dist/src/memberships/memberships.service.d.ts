@@ -7,24 +7,24 @@ export declare class MembershipsService {
     constructor(prisma: PrismaService);
     createPlan(createMembershipPlanDto: CreateMembershipPlanDto): Promise<{
         id: string;
-        isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
         name: string;
         description: string | null;
         duration: number;
         price: number;
+        isActive: boolean;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
     findAllPlans(page?: number, limit?: number, isActive?: boolean): Promise<{
         plans: {
             id: string;
-            isActive: boolean;
-            createdAt: Date;
-            updatedAt: Date;
             name: string;
             description: string | null;
             duration: number;
             price: number;
+            isActive: boolean;
+            createdAt: Date;
+            updatedAt: Date;
         }[];
         pagination: {
             total: number;
@@ -45,31 +45,31 @@ export declare class MembershipsService {
             id: string;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
+            planId: string;
             startDate: Date;
             endDate: Date;
             status: string;
-            userId: string;
-            planId: string;
         })[];
     } & {
         id: string;
-        isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
         name: string;
         description: string | null;
         duration: number;
         price: number;
+        isActive: boolean;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
     updatePlan(id: string, updateMembershipPlanDto: UpdateMembershipPlanDto): Promise<{
         id: string;
-        isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
         name: string;
         description: string | null;
         duration: number;
         price: number;
+        isActive: boolean;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
     removePlan(id: string): Promise<{
         message: string;
@@ -83,63 +83,63 @@ export declare class MembershipsService {
         };
         plan: {
             id: string;
-            isActive: boolean;
-            createdAt: Date;
-            updatedAt: Date;
             name: string;
             description: string | null;
             duration: number;
             price: number;
+            isActive: boolean;
+            createdAt: Date;
+            updatedAt: Date;
         };
     } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
+        planId: string;
         startDate: Date;
         endDate: Date;
         status: string;
-        userId: string;
-        planId: string;
     }>;
     findAllMemberships(page?: number, limit?: number, status?: string, userId?: string): Promise<{
         memberships: ({
-            payments: {
-                id: string;
-                createdAt: Date;
-                updatedAt: Date;
-                description: string | null;
-                status: string;
-                userId: string;
-                amount: number;
-                method: string;
-                transactionId: string | null;
-                membershipId: string | null;
-            }[];
             user: {
                 id: string;
                 email: string;
                 firstName: string;
                 lastName: string;
             };
-            plan: {
+            payments: {
                 id: string;
-                isActive: boolean;
+                description: string | null;
                 createdAt: Date;
                 updatedAt: Date;
+                userId: string;
+                status: string;
+                membershipId: string | null;
+                amount: number;
+                method: string;
+                transactionId: string | null;
+            }[];
+            plan: {
+                id: string;
                 name: string;
                 description: string | null;
                 duration: number;
                 price: number;
+                isActive: boolean;
+                createdAt: Date;
+                updatedAt: Date;
             };
         } & {
             id: string;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
+            planId: string;
             startDate: Date;
             endDate: Date;
             status: string;
-            userId: string;
-            planId: string;
         })[];
         pagination: {
             total: number;
@@ -149,18 +149,6 @@ export declare class MembershipsService {
         };
     }>;
     findOneMembership(id: string): Promise<{
-        payments: {
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            description: string | null;
-            status: string;
-            userId: string;
-            amount: number;
-            method: string;
-            transactionId: string | null;
-            membershipId: string | null;
-        }[];
         user: {
             id: string;
             email: string;
@@ -168,25 +156,37 @@ export declare class MembershipsService {
             lastName: string;
             phone: string;
         };
-        plan: {
+        payments: {
             id: string;
-            isActive: boolean;
+            description: string | null;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
+            status: string;
+            membershipId: string | null;
+            amount: number;
+            method: string;
+            transactionId: string | null;
+        }[];
+        plan: {
+            id: string;
             name: string;
             description: string | null;
             duration: number;
             price: number;
+            isActive: boolean;
+            createdAt: Date;
+            updatedAt: Date;
         };
     } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
+        planId: string;
         startDate: Date;
         endDate: Date;
         status: string;
-        userId: string;
-        planId: string;
     }>;
     updateMembership(id: string, updateData: any): Promise<{
         user: {
@@ -197,23 +197,23 @@ export declare class MembershipsService {
         };
         plan: {
             id: string;
-            isActive: boolean;
-            createdAt: Date;
-            updatedAt: Date;
             name: string;
             description: string | null;
             duration: number;
             price: number;
+            isActive: boolean;
+            createdAt: Date;
+            updatedAt: Date;
         };
     } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
+        planId: string;
         startDate: Date;
         endDate: Date;
         status: string;
-        userId: string;
-        planId: string;
     }>;
     removeMembership(id: string): Promise<{
         message: string;
@@ -227,23 +227,23 @@ export declare class MembershipsService {
         };
         plan: {
             id: string;
-            isActive: boolean;
-            createdAt: Date;
-            updatedAt: Date;
             name: string;
             description: string | null;
             duration: number;
             price: number;
+            isActive: boolean;
+            createdAt: Date;
+            updatedAt: Date;
         };
     } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
+        planId: string;
         startDate: Date;
         endDate: Date;
         status: string;
-        userId: string;
-        planId: string;
     }>;
     suspendMembership(id: string): Promise<{
         user: {
@@ -254,23 +254,23 @@ export declare class MembershipsService {
         };
         plan: {
             id: string;
-            isActive: boolean;
-            createdAt: Date;
-            updatedAt: Date;
             name: string;
             description: string | null;
             duration: number;
             price: number;
+            isActive: boolean;
+            createdAt: Date;
+            updatedAt: Date;
         };
     } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
+        planId: string;
         startDate: Date;
         endDate: Date;
         status: string;
-        userId: string;
-        planId: string;
     }>;
     activateMembership(id: string): Promise<{
         user: {
@@ -281,23 +281,23 @@ export declare class MembershipsService {
         };
         plan: {
             id: string;
-            isActive: boolean;
-            createdAt: Date;
-            updatedAt: Date;
             name: string;
             description: string | null;
             duration: number;
             price: number;
+            isActive: boolean;
+            createdAt: Date;
+            updatedAt: Date;
         };
     } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
+        planId: string;
         startDate: Date;
         endDate: Date;
         status: string;
-        userId: string;
-        planId: string;
     }>;
     getExpiringMemberships(days?: number): Promise<({
         user: {
@@ -309,23 +309,23 @@ export declare class MembershipsService {
         };
         plan: {
             id: string;
-            isActive: boolean;
-            createdAt: Date;
-            updatedAt: Date;
             name: string;
             description: string | null;
             duration: number;
             price: number;
+            isActive: boolean;
+            createdAt: Date;
+            updatedAt: Date;
         };
     } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
+        planId: string;
         startDate: Date;
         endDate: Date;
         status: string;
-        userId: string;
-        planId: string;
     })[]>;
     getMembershipStats(): Promise<{
         total: number;
@@ -333,5 +333,134 @@ export declare class MembershipsService {
         expired: number;
         suspended: number;
         expiringThisWeek: number;
+    }>;
+    validateMembership(membershipId: string): Promise<{
+        isValid: boolean;
+        status: string;
+        message: string;
+        membership: {
+            id: string;
+            startDate: Date;
+            endDate: Date;
+            status: string;
+            daysRemaining: number;
+            user: {
+                id: string;
+                isActive: boolean;
+                email: string;
+                firstName: string;
+                lastName: string;
+                cedula: string;
+                phone: string;
+                photo: string;
+                holler: string;
+            };
+            plan: {
+                name: string;
+                duration: number;
+            };
+        };
+    }>;
+    validateMembershipByUserId(userId: string): Promise<{
+        isValid: boolean;
+        status: string;
+        message: string;
+        membership: {
+            id: string;
+            startDate: Date;
+            endDate: Date;
+            status: string;
+            daysRemaining: number;
+            user: {
+                id: string;
+                isActive: boolean;
+                email: string;
+                firstName: string;
+                lastName: string;
+                cedula: string;
+                phone: string;
+                photo: string;
+                holler: string;
+            };
+            plan: {
+                name: string;
+                duration: number;
+            };
+        };
+    }>;
+    validateMembershipByCedula(cedula: string): Promise<{
+        isValid: boolean;
+        status: string;
+        message: string;
+        membership: {
+            id: string;
+            startDate: Date;
+            endDate: Date;
+            status: string;
+            daysRemaining: number;
+            user: {
+                id: string;
+                isActive: boolean;
+                email: string;
+                firstName: string;
+                lastName: string;
+                cedula: string;
+                phone: string;
+                photo: string;
+                holler: string;
+            };
+            plan: {
+                name: string;
+                duration: number;
+            };
+        };
+    } | {
+        isValid: boolean;
+        status: string;
+        message: string;
+        membership: any;
+        user: {
+            firstName: string;
+            lastName: string;
+            cedula: string;
+        };
+    }>;
+    validateMembershipByHoller(holler: string): Promise<{
+        isValid: boolean;
+        status: string;
+        message: string;
+        membership: {
+            id: string;
+            startDate: Date;
+            endDate: Date;
+            status: string;
+            daysRemaining: number;
+            user: {
+                id: string;
+                isActive: boolean;
+                email: string;
+                firstName: string;
+                lastName: string;
+                cedula: string;
+                phone: string;
+                photo: string;
+                holler: string;
+            };
+            plan: {
+                name: string;
+                duration: number;
+            };
+        };
+    } | {
+        isValid: boolean;
+        status: string;
+        message: string;
+        membership: any;
+        user: {
+            firstName: string;
+            lastName: string;
+            cedula: string;
+            photo: string;
+        };
     }>;
 }

@@ -72,6 +72,18 @@ let MembershipsController = class MembershipsController {
     activate(id) {
         return this.membershipsService.activateMembership(id);
     }
+    validateMembership(id) {
+        return this.membershipsService.validateMembership(id);
+    }
+    validateMembershipByUser(userId) {
+        return this.membershipsService.validateMembershipByUserId(userId);
+    }
+    validateMembershipByCedula(cedula) {
+        return this.membershipsService.validateMembershipByCedula(cedula);
+    }
+    validateMembershipByHoller(holler) {
+        return this.membershipsService.validateMembershipByHoller(holler);
+    }
 };
 exports.MembershipsController = MembershipsController;
 __decorate([
@@ -235,6 +247,46 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], MembershipsController.prototype, "activate", null);
+__decorate([
+    (0, common_1.Get)('validate/:id'),
+    (0, roles_decorator_1.Roles)(roles_1.Role.ADMIN, roles_1.Role.RECEPTIONIST, roles_1.Role.TRAINER),
+    (0, swagger_1.ApiOperation)({ summary: 'Validate membership by membership ID' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Membership validation result' }),
+    __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], MembershipsController.prototype, "validateMembership", null);
+__decorate([
+    (0, common_1.Get)('validate/user/:userId'),
+    (0, roles_decorator_1.Roles)(roles_1.Role.ADMIN, roles_1.Role.RECEPTIONIST, roles_1.Role.TRAINER),
+    (0, swagger_1.ApiOperation)({ summary: 'Validate membership by user ID' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Membership validation result' }),
+    __param(0, (0, common_1.Param)('userId', common_1.ParseUUIDPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], MembershipsController.prototype, "validateMembershipByUser", null);
+__decorate([
+    (0, common_1.Get)('validate/cedula/:cedula'),
+    (0, roles_decorator_1.Roles)(roles_1.Role.ADMIN, roles_1.Role.RECEPTIONIST, roles_1.Role.TRAINER),
+    (0, swagger_1.ApiOperation)({ summary: 'Validate membership by cedula (Colombian ID)' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Membership validation result' }),
+    __param(0, (0, common_1.Param)('cedula')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], MembershipsController.prototype, "validateMembershipByCedula", null);
+__decorate([
+    (0, common_1.Get)('validate/holler/:holler'),
+    (0, roles_decorator_1.Roles)(roles_1.Role.ADMIN, roles_1.Role.RECEPTIONIST, roles_1.Role.TRAINER),
+    (0, swagger_1.ApiOperation)({ summary: 'Validate membership by digital holler ID' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Membership validation result' }),
+    __param(0, (0, common_1.Param)('holler')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], MembershipsController.prototype, "validateMembershipByHoller", null);
 exports.MembershipsController = MembershipsController = __decorate([
     (0, swagger_1.ApiTags)('Memberships'),
     (0, common_1.Controller)('memberships'),

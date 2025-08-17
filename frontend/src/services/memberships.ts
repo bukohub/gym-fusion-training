@@ -83,4 +83,17 @@ export const membershipsApi = {
 
   getStats: () =>
     api.get('/memberships/stats'),
+
+  // Membership validation
+  validate: (membershipId: string) =>
+    api.get(`/memberships/validate/${membershipId}`),
+
+  validateByUserId: (userId: string) =>
+    api.get(`/memberships/validate/user/${userId}`),
+
+  validateByCedula: (cedula: string) =>
+    api.get(`/memberships/validate/cedula/${cedula}`),
+
+  validateByHoller: (holler: string) =>
+    api.get(`/memberships/validate/holler/${holler}`),
 };

@@ -36,7 +36,7 @@ const DashboardPage: React.FC = () => {
       setStats(response.data);
     } catch (error) {
       // Use fallback data if API fails
-      toast.error('Unable to load real-time stats, showing demo data');
+      toast.error('No se pudieron cargar las estadísticas en tiempo real, mostrando datos de ejemplo');
     } finally {
       setLoading(false);
     }
@@ -98,16 +98,16 @@ const DashboardPage: React.FC = () => {
     <div className="space-y-6">
       <div className="bg-white shadow rounded-lg p-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Welcome back, {user?.firstName}! 👋
+          ¡Bienvenido de vuelta, {user?.firstName}! 👋
         </h1>
         <p className="text-gray-600">
           {user?.role === 'ADMIN' 
-            ? 'Monitor your gym operations, track performance, and manage all aspects of your business.'
+            ? 'Monitorea las operaciones de tu gimnasio, rastrea el rendimiento y gestiona todos los aspectos de tu negocio.'
             : user?.role === 'RECEPTIONIST'
-            ? 'Manage member check-ins, process payments, and handle day-to-day operations.'
+            ? 'Gestiona el check-in de miembros, procesa pagos y maneja las operaciones diarias.'
             : user?.role === 'TRAINER'
-            ? 'View your classes, track attendance, and manage your training schedule.'
-            : 'Welcome to your fitness journey! Check your memberships and book classes.'
+            ? 'Ve tus clases, rastrea asistencia y gestiona tu horario de entrenamiento.'
+            : '¡Bienvenido a tu viaje de fitness! Revisa tus membresías y reserva clases.'
           }
         </p>
       </div>
@@ -115,42 +115,42 @@ const DashboardPage: React.FC = () => {
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <StatCard
-          title="Total Users"
+          title="Total de Usuarios"
           value={stats.totalUsers}
           icon="👥"
           color="blue"
           onClick={() => navigate('/users')}
         />
         <StatCard
-          title="Active Members"
+          title="Miembros Activos"
           value={stats.activeMembers}
           icon="💪"
           color="green"
           onClick={() => navigate('/memberships')}
         />
         <StatCard
-          title="Monthly Revenue"
+          title="Ingresos Mensuales"
           value={`$${stats.monthlyRevenue.toLocaleString()}`}
           icon="💰"
           color="purple"
           onClick={() => navigate('/payments')}
         />
         <StatCard
-          title="Classes This Week"
+          title="Clases Esta Semana"
           value={stats.classesThisWeek}
           icon="🏃‍♂️"
           color="indigo"
           onClick={() => navigate('/classes')}
         />
         <StatCard
-          title="Expiring Soon"
+          title="Por Vencer Pronto"
           value={stats.expiringMemberships}
           icon="⚠️"
           color="yellow"
           onClick={() => navigate('/memberships')}
         />
         <StatCard
-          title="Low Stock Items"
+          title="Productos Bajo Stock"
           value={stats.lowStockProducts}
           icon="📦"
           color="red"
@@ -160,19 +160,19 @@ const DashboardPage: React.FC = () => {
 
       {/* Quick Actions */}
       <div className="bg-white shadow rounded-lg p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Acciones Rápidas</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <QuickActionButton onClick={() => navigate('/users')} variant="primary">
-            ➕ Add New User
+            ➕ Agregar Usuario
           </QuickActionButton>
           <QuickActionButton onClick={() => navigate('/classes')}>
-            📅 Schedule Class
+            📅 Programar Clase
           </QuickActionButton>
           <QuickActionButton onClick={() => navigate('/payments')}>
-            💳 Process Payment
+            💳 Procesar Pago
           </QuickActionButton>
           <QuickActionButton onClick={() => navigate('/reports')}>
-            📊 View Reports
+            📊 Ver Reportes
           </QuickActionButton>
         </div>
       </div>
@@ -180,39 +180,39 @@ const DashboardPage: React.FC = () => {
       {/* Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white shadow rounded-lg p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Recent Activity</h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-4">Actividad Reciente</h3>
           <div className="space-y-3">
             <div className="flex items-center text-sm text-gray-600">
               <span className="w-2 h-2 bg-green-400 rounded-full mr-3"></span>
-              <span className="flex-1">New member John Doe registered</span>
-              <span className="text-xs text-gray-400">2 min ago</span>
+              <span className="flex-1">Nuevo miembro Juan Pérez se registró</span>
+              <span className="text-xs text-gray-400">hace 2 min</span>
             </div>
             <div className="flex items-center text-sm text-gray-600">
               <span className="w-2 h-2 bg-blue-400 rounded-full mr-3"></span>
-              <span className="flex-1">Payment of $89 processed</span>
-              <span className="text-xs text-gray-400">5 min ago</span>
+              <span className="flex-1">Pago de $89 procesado</span>
+              <span className="text-xs text-gray-400">hace 5 min</span>
             </div>
             <div className="flex items-center text-sm text-gray-600">
               <span className="w-2 h-2 bg-purple-400 rounded-full mr-3"></span>
-              <span className="flex-1">Yoga class booked by Sarah Wilson</span>
-              <span className="text-xs text-gray-400">10 min ago</span>
+              <span className="flex-1">Clase de Yoga reservada por María García</span>
+              <span className="text-xs text-gray-400">hace 10 min</span>
             </div>
             <div className="flex items-center text-sm text-gray-600">
               <span className="w-2 h-2 bg-yellow-400 rounded-full mr-3"></span>
-              <span className="flex-1">Product "Protein Powder" sold</span>
-              <span className="text-xs text-gray-400">15 min ago</span>
+              <span className="flex-1">Producto "Proteína en Polvo" vendido</span>
+              <span className="text-xs text-gray-400">hace 15 min</span>
             </div>
           </div>
         </div>
 
         <div className="bg-white shadow rounded-lg p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Alerts & Notifications</h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-4">Alertas y Notificaciones</h3>
           <div className="space-y-3">
             {stats.expiringMemberships > 0 && (
               <div className="flex items-center p-3 bg-yellow-50 rounded-md">
                 <span className="text-yellow-400 mr-3">⚠️</span>
                 <span className="text-sm text-yellow-800">
-                  {stats.expiringMemberships} memberships expiring in 30 days
+                  {stats.expiringMemberships} membresías vencen en 30 días
                 </span>
               </div>
             )}
@@ -220,14 +220,14 @@ const DashboardPage: React.FC = () => {
               <div className="flex items-center p-3 bg-red-50 rounded-md">
                 <span className="text-red-400 mr-3">📦</span>
                 <span className="text-sm text-red-800">
-                  {stats.lowStockProducts} products are low in stock
+                  {stats.lowStockProducts} productos tienen bajo stock
                 </span>
               </div>
             )}
             <div className="flex items-center p-3 bg-green-50 rounded-md">
               <span className="text-green-400 mr-3">✅</span>
               <span className="text-sm text-green-800">
-                All systems operational
+                Todos los sistemas funcionan correctamente
               </span>
             </div>
           </div>

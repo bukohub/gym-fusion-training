@@ -15,6 +15,7 @@ export declare class ClassesService {
         bookings: ({
             user: {
                 id: string;
+                cedula: string;
                 firstName: string;
                 lastName: string;
             };
@@ -52,6 +53,7 @@ export declare class ClassesService {
             bookings: ({
                 user: {
                     id: string;
+                    cedula: string;
                     firstName: string;
                     lastName: string;
                 };
@@ -96,6 +98,7 @@ export declare class ClassesService {
             user: {
                 id: string;
                 email: string;
+                cedula: string;
                 firstName: string;
                 lastName: string;
                 phone: string;
@@ -130,6 +133,7 @@ export declare class ClassesService {
         bookings: ({
             user: {
                 id: string;
+                cedula: string;
                 firstName: string;
                 lastName: string;
             };
@@ -161,6 +165,7 @@ export declare class ClassesService {
         user: {
             id: string;
             email: string;
+            cedula: string;
             firstName: string;
             lastName: string;
         };
@@ -197,6 +202,7 @@ export declare class ClassesService {
     markAttendance(bookingId: string, attended: boolean): Promise<{
         user: {
             id: string;
+            cedula: string;
             firstName: string;
             lastName: string;
         };
@@ -238,6 +244,7 @@ export declare class ClassesService {
         bookings: ({
             user: {
                 id: string;
+                cedula: string;
                 firstName: string;
                 lastName: string;
             };

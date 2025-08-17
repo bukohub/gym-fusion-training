@@ -11,9 +11,9 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
   const { user, logout } = useAuth();
 
   const userNavigation = [
-    { name: 'Your Profile', href: '/profile' },
-    { name: 'Settings', href: '/settings' },
-    { name: 'Sign out', onClick: logout },
+    { name: 'Tu Perfil', href: '/profile' },
+    { name: 'Configuración', href: '/settings' },
+    { name: 'Cerrar Sesión', onClick: logout },
   ];
 
   const getInitials = (firstName: string, lastName: string) => {
@@ -27,7 +27,7 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
         className="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 lg:hidden"
         onClick={() => setSidebarOpen(true)}
       >
-        <span className="sr-only">Open sidebar</span>
+        <span className="sr-only">Abrir menú</span>
         <Bars3Icon className="h-6 w-6" aria-hidden="true" />
       </button>
       
@@ -43,7 +43,7 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
             type="button"
             className="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
           >
-            <span className="sr-only">View notifications</span>
+            <span className="sr-only">Ver notificaciones</span>
             <BellIcon className="h-6 w-6" aria-hidden="true" />
           </button>
 
@@ -51,7 +51,7 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
           <Menu as="div" className="ml-3 relative">
             <div>
               <Menu.Button className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-                <span className="sr-only">Open user menu</span>
+                <span className="sr-only">Abrir menú de usuario</span>
                 {user?.avatar ? (
                   <img
                     className="h-8 w-8 rounded-full"

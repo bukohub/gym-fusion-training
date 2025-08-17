@@ -9,7 +9,8 @@ import {
   ShoppingBagIcon,
   ChartBarIcon,
   XMarkIcon,
-  Cog6ToothIcon
+  Cog6ToothIcon,
+  ShieldCheckIcon
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../store/AuthContext';
 import { Role } from '../../types';
@@ -24,13 +25,14 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
   const { user } = useAuth();
 
   const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, roles: [Role.ADMIN, Role.RECEPTIONIST, Role.TRAINER] },
-    { name: 'Users', href: '/users', icon: UsersIcon, roles: [Role.ADMIN, Role.RECEPTIONIST] },
-    { name: 'Memberships', href: '/memberships', icon: CreditCardIcon, roles: [Role.ADMIN, Role.RECEPTIONIST] },
-    { name: 'Payments', href: '/payments', icon: CreditCardIcon, roles: [Role.ADMIN, Role.RECEPTIONIST] },
-    { name: 'Classes', href: '/classes', icon: CalendarIcon, roles: [Role.ADMIN, Role.RECEPTIONIST, Role.TRAINER] },
-    { name: 'Products', href: '/products', icon: ShoppingBagIcon, roles: [Role.ADMIN, Role.RECEPTIONIST] },
-    { name: 'Reports', href: '/reports', icon: ChartBarIcon, roles: [Role.ADMIN] },
+    { name: 'Tablero', href: '/dashboard', icon: HomeIcon, roles: [Role.ADMIN, Role.RECEPTIONIST, Role.TRAINER] },
+    { name: 'Validación', href: '/validation', icon: ShieldCheckIcon, roles: [Role.ADMIN, Role.RECEPTIONIST, Role.TRAINER] },
+    { name: 'Usuarios', href: '/users', icon: UsersIcon, roles: [Role.ADMIN, Role.RECEPTIONIST] },
+    { name: 'Membresías', href: '/memberships', icon: CreditCardIcon, roles: [Role.ADMIN, Role.RECEPTIONIST] },
+    { name: 'Pagos', href: '/payments', icon: CreditCardIcon, roles: [Role.ADMIN, Role.RECEPTIONIST] },
+    { name: 'Clases', href: '/classes', icon: CalendarIcon, roles: [Role.ADMIN, Role.RECEPTIONIST, Role.TRAINER] },
+    { name: 'Productos', href: '/products', icon: ShoppingBagIcon, roles: [Role.ADMIN, Role.RECEPTIONIST] },
+    { name: 'Reportes', href: '/reports', icon: ChartBarIcon, roles: [Role.ADMIN] },
   ];
 
   const filteredNavigation = navigation.filter(item => 
@@ -78,7 +80,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
           onClick={() => setSidebarOpen(false)}
         >
           <Cog6ToothIcon className="mr-3 flex-shrink-0 h-6 w-6 text-gray-400 group-hover:text-gray-500" />
-          Profile
+          Perfil
         </Link>
       </div>
     </div>
@@ -127,7 +129,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
                       className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
                       onClick={() => setSidebarOpen(false)}
                     >
-                      <span className="sr-only">Close sidebar</span>
+                      <span className="sr-only">Cerrar menú</span>
                       <XMarkIcon className="h-6 w-6 text-white" aria-hidden="true" />
                     </button>
                   </div>

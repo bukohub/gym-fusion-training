@@ -360,7 +360,7 @@ const PaymentsPage: React.FC = () => {
         data={payments}
         columns={paymentColumns}
         loading={loading}
-        emptyMessage="No payments found"
+        emptyMessage="No se encontraron pagos"
       />
 
       {/* Pagination */}

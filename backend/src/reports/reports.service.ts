@@ -83,6 +83,7 @@ export class ReportsService {
           select: {
             firstName: true,
             lastName: true,
+            cedula: true,
             email: true,
           },
         },
@@ -130,6 +131,7 @@ export class ReportsService {
             select: {
               firstName: true,
               lastName: true,
+              cedula: true,
               email: true,
             },
           },
@@ -193,6 +195,7 @@ export class ReportsService {
               select: {
                 firstName: true,
                 lastName: true,
+                cedula: true,
               },
             },
           },

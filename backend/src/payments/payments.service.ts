@@ -21,6 +21,7 @@ export class PaymentsService {
             firstName: true,
             lastName: true,
             email: true,
+            cedula: true,
           },
         },
         membership: {
@@ -102,6 +103,7 @@ export class PaymentsService {
             lastName: true,
             email: true,
             phone: true,
+            cedula: true,
           },
         },
         membership: {
@@ -139,6 +141,7 @@ export class PaymentsService {
             firstName: true,
             lastName: true,
             email: true,
+            cedula: true,
           },
         },
         membership: {

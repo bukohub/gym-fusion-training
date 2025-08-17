@@ -3,9 +3,12 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
+  cedula: string;
   phone?: string;
   role: Role;
   avatar?: string;
+  photo?: string;
+  holler?: string;
   isActive: boolean;
   emailVerified?: boolean;
   lastLogin?: string;
@@ -175,8 +178,11 @@ export interface RegisterData {
   password: string;
   firstName: string;
   lastName: string;
+  cedula: string;
   phone?: string;
   role?: Role;
+  photo?: string;
+  holler?: string;
 }
 
 export interface DashboardStats {

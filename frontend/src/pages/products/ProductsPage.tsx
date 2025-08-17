@@ -159,12 +159,12 @@ const ProductsPage: React.FC = () => {
     if (!selectedProduct) return;
     try {
       await productsApi.updateStock(selectedProduct.id, stockForm.quantity, stockForm.operation);
-      toast.success('Stock updated successfully');
+      toast.success('Stock actualizado exitosamente');
       setIsModalOpen(false);
       loadProducts();
       resetStockForm();
     } catch (error) {
-      toast.error('Failed to update stock');
+      toast.error('Error al actualizar stock');
     }
   };
 
@@ -244,9 +244,9 @@ const ProductsPage: React.FC = () => {
 
   // Table columns
   const productColumns: TableColumn<Product>[] = [
-    { key: 'name', label: 'Name', sortable: true },
-    { key: 'category', label: 'Category', sortable: true },
-    { key: 'price', label: 'Price', render: (value) => `$${value}`, sortable: true },
+    { key: 'name', label: 'Nombre', sortable: true },
+    { key: 'category', label: 'Categoría', sortable: true },
+    { key: 'price', label: 'Precio', render: (value) => `$${value}`, sortable: true },
     {
       key: 'stock',
       label: 'Stock',
@@ -257,21 +257,21 @@ const ProductsPage: React.FC = () => {
       ),
       sortable: true,
     },
-    { key: 'minStock', label: 'Min Stock', sortable: true },
+    { key: 'minStock', label: 'Stock Mínimo', sortable: true },
     {
       key: 'isActive',
-      label: 'Status',
+      label: 'Estado',
       render: (value) => (
         <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
           value ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
         }`}>
-          {value ? 'Active' : 'Inactive'}
+          {value ? 'Activo' : 'Inactivo'}
         </span>
       ),
     },
     {
       key: 'id',
-      label: 'Actions',
+      label: 'Acciones',
       render: (_, item) => (
         <div className="flex space-x-2">
           <button
@@ -300,16 +300,16 @@ const ProductsPage: React.FC = () => {
   const salesColumns: TableColumn<Sale>[] = [
     {
       key: 'product',
-      label: 'Product',
+      label: 'Producto',
       render: (product) => product?.name || 'N/A',
     },
-    { key: 'quantity', label: 'Quantity', sortable: true },
-    { key: 'unitPrice', label: 'Unit Price', render: (value) => `$${value}`, sortable: true },
+    { key: 'quantity', label: 'Cantidad', sortable: true },
+    { key: 'unitPrice', label: 'Precio Unitario', render: (value) => `$${value}`, sortable: true },
     { key: 'totalPrice', label: 'Total', render: (value) => `$${value}`, sortable: true },
-    { key: 'soldBy', label: 'Sold By' },
+    { key: 'soldBy', label: 'Vendido Por' },
     {
       key: 'createdAt',
-      label: 'Date',
+      label: 'Fecha',
       render: (value) => new Date(value).toLocaleString(),
       sortable: true,
     },
@@ -402,14 +402,14 @@ const ProductsPage: React.FC = () => {
           data={products}
           columns={productColumns}
           loading={loading}
-          emptyMessage="No products found"
+          emptyMessage="No se encontraron productos"
         />
       ) : (
         <Table
           data={sales}
           columns={salesColumns}
           loading={loading}
-          emptyMessage="No sales found"
+          emptyMessage="No se encontraron ventas"
         />
       )}
 
