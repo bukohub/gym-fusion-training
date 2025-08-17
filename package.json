@@ -1,0 +1,42 @@
+{
+  "name": "gym-management-system",
+  "version": "1.0.0",
+  "description": "Complete gym management system with NestJS backend and React frontend",
+  "scripts": {
+    "install:all": "npm run install:backend && npm run install:frontend",
+    "install:backend": "cd backend && npm install",
+    "install:frontend": "cd frontend && npm install",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run start:dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "start:backend": "cd backend && npm run start:prod",
+    "start:frontend": "cd frontend && npm run preview",
+    "db:setup": "cd backend && npm run prisma:migrate && npm run prisma:generate",
+    "db:seed": "cd backend && npm run seed",
+    "db:studio": "cd backend && npm run prisma:studio",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd backend && npm run test",
+    "test:frontend": "cd frontend && npm run test",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "lint:backend": "cd backend && npm run lint",
+    "lint:frontend": "cd frontend && npm run lint"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [
+    "gym",
+    "management",
+    "nestjs",
+    "react",
+    "typescript",
+    "postgresql",
+    "prisma"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}

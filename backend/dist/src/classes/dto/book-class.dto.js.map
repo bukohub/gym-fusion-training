@@ -1,0 +1,1 @@
+{"version":3,"file":"book-class.dto.js","sourceRoot":"","sources":["../../../../src/classes/dto/book-class.dto.ts"],"names":[],"mappings":";;;;;;;;;;;;AAAA,qDAA2C;AAC3C,6CAA8C;AAE9C,MAAa,YAAY;CAQxB;AARD,oCAQC;AALC;IAFC,IAAA,qBAAW,EAAC,EAAE,OAAO,EAAE,WAAW,EAAE,CAAC;IACrC,IAAA,0BAAQ,GAAE;;4CACI;AAIf;IAFC,IAAA,qBAAW,EAAC,EAAE,OAAO,EAAE,YAAY,EAAE,CAAC;IACtC,IAAA,0BAAQ,GAAE;;6CACK"}
