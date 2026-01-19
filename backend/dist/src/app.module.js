@@ -18,6 +18,7 @@ const classes_module_1 = require("./classes/classes.module");
 const products_module_1 = require("./products/products.module");
 const reports_module_1 = require("./reports/reports.module");
 const uploads_module_1 = require("./uploads/uploads.module");
+const validation_logs_module_1 = require("./validation-logs/validation-logs.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -36,6 +37,7 @@ exports.AppModule = AppModule = __decorate([
             products_module_1.ProductsModule,
             reports_module_1.ReportsModule,
             uploads_module_1.UploadsModule,
+            validation_logs_module_1.ValidationLogsModule,
         ],
     })
 ], AppModule);

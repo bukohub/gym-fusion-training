@@ -50,16 +50,18 @@ export class UsersService {
     });
   }
 
-  async findAll(page = 1, limit = 10, role?: Role, search?: string) {
+  async findAll(page = 1, limit = 10, role?: Role, isActive?: boolean, search?: string) {
     const offset = (page - 1) * limit;
     
     const where = {
       ...(role && { role }),
+      ...(typeof isActive === 'boolean' && { isActive }),
       ...(search && {
         OR: [
-          { firstName: { contains: search, mode: 'insensitive' as const } },
-          { lastName: { contains: search, mode: 'insensitive' as const } },
-          { email: { contains: search, mode: 'insensitive' as const } },
+          { firstName: { contains: search } },
+          { lastName: { contains: search } },
+          { email: { contains: search } },
+          { cedula: { contains: search } },
         ],
       }),
     };

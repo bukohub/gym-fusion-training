@@ -484,6 +484,17 @@ export class MembershipsService {
     });
 
     if (!user) {
+      // Log failed validation attempt
+      await this.prisma.validationLog.create({
+        data: {
+          userId: null,
+          identifier: cedula,
+          validationType: 'CEDULA',
+          success: false,
+          reason: 'Usuario no encontrado',
+        },
+      });
+
       return {
         isValid: false,
         status: 'USER_NOT_FOUND',
@@ -522,6 +533,17 @@ export class MembershipsService {
     });
 
     if (!activeMembership) {
+      // Log failed validation attempt
+      await this.prisma.validationLog.create({
+        data: {
+          userId: user.id,
+          identifier: cedula,
+          validationType: 'CEDULA',
+          success: false,
+          reason: 'Sin membresía activa',
+        },
+      });
+
       return {
         isValid: false,
         status: 'NO_ACTIVE_MEMBERSHIP',
@@ -537,6 +559,18 @@ export class MembershipsService {
 
     // Use existing validation logic
     const validation = await this.validateMembership(activeMembership.id);
+    
+    // Log validation attempt
+    await this.prisma.validationLog.create({
+      data: {
+        userId: user.id,
+        identifier: cedula,
+        validationType: 'CEDULA',
+        success: validation.isValid,
+        reason: validation.isValid ? null : validation.message,
+      },
+    });
+
     return validation;
   }
 
@@ -548,6 +582,17 @@ export class MembershipsService {
     });
 
     if (!user) {
+      // Log failed validation attempt
+      await this.prisma.validationLog.create({
+        data: {
+          userId: null,
+          identifier: holler,
+          validationType: 'HOLLER',
+          success: false,
+          reason: 'Usuario no encontrado',
+        },
+      });
+
       return {
         isValid: false,
         status: 'USER_NOT_FOUND',
@@ -587,6 +632,17 @@ export class MembershipsService {
     });
 
     if (!activeMembership) {
+      // Log failed validation attempt
+      await this.prisma.validationLog.create({
+        data: {
+          userId: user.id,
+          identifier: holler,
+          validationType: 'HOLLER',
+          success: false,
+          reason: 'Sin membresía activa',
+        },
+      });
+
       return {
         isValid: false,
         status: 'NO_ACTIVE_MEMBERSHIP',
@@ -603,6 +659,18 @@ export class MembershipsService {
 
     // Use existing validation logic
     const validation = await this.validateMembership(activeMembership.id);
+    
+    // Log validation attempt
+    await this.prisma.validationLog.create({
+      data: {
+        userId: user.id,
+        identifier: holler,
+        validationType: 'HOLLER',
+        success: validation.isValid,
+        reason: validation.isValid ? null : validation.message,
+      },
+    });
+
     return validation;
   }
 }

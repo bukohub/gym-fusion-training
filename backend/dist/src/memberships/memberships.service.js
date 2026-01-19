@@ -435,6 +435,15 @@ let MembershipsService = class MembershipsService {
             select: { id: true, isActive: true, firstName: true, lastName: true, cedula: true, photo: true },
         });
         if (!user) {
+            await this.prisma.validationLog.create({
+                data: {
+                    userId: null,
+                    identifier: cedula,
+                    validationType: 'CEDULA',
+                    success: false,
+                    reason: 'Usuario no encontrado',
+                },
+            });
             return {
                 isValid: false,
                 status: 'USER_NOT_FOUND',
@@ -470,6 +479,15 @@ let MembershipsService = class MembershipsService {
             orderBy: { endDate: 'desc' },
         });
         if (!activeMembership) {
+            await this.prisma.validationLog.create({
+                data: {
+                    userId: user.id,
+                    identifier: cedula,
+                    validationType: 'CEDULA',
+                    success: false,
+                    reason: 'Sin membresía activa',
+                },
+            });
             return {
                 isValid: false,
                 status: 'NO_ACTIVE_MEMBERSHIP',
@@ -483,6 +501,15 @@ let MembershipsService = class MembershipsService {
             };
         }
         const validation = await this.validateMembership(activeMembership.id);
+        await this.prisma.validationLog.create({
+            data: {
+                userId: user.id,
+                identifier: cedula,
+                validationType: 'CEDULA',
+                success: validation.isValid,
+                reason: validation.isValid ? null : validation.message,
+            },
+        });
         return validation;
     }
     async validateMembershipByHoller(holler) {
@@ -491,6 +518,15 @@ let MembershipsService = class MembershipsService {
             select: { id: true, isActive: true, firstName: true, lastName: true, cedula: true, photo: true },
         });
         if (!user) {
+            await this.prisma.validationLog.create({
+                data: {
+                    userId: null,
+                    identifier: holler,
+                    validationType: 'HOLLER',
+                    success: false,
+                    reason: 'Usuario no encontrado',
+                },
+            });
             return {
                 isValid: false,
                 status: 'USER_NOT_FOUND',
@@ -527,6 +563,15 @@ let MembershipsService = class MembershipsService {
             orderBy: { endDate: 'desc' },
         });
         if (!activeMembership) {
+            await this.prisma.validationLog.create({
+                data: {
+                    userId: user.id,
+                    identifier: holler,
+                    validationType: 'HOLLER',
+                    success: false,
+                    reason: 'Sin membresía activa',
+                },
+            });
             return {
                 isValid: false,
                 status: 'NO_ACTIVE_MEMBERSHIP',
@@ -541,6 +586,15 @@ let MembershipsService = class MembershipsService {
             };
         }
         const validation = await this.validateMembership(activeMembership.id);
+        await this.prisma.validationLog.create({
+            data: {
+                userId: user.id,
+                identifier: holler,
+                validationType: 'HOLLER',
+                success: validation.isValid,
+                reason: validation.isValid ? null : validation.message,
+            },
+        });
         return validation;
     }
 };

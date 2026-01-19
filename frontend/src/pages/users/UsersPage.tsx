@@ -87,7 +87,12 @@ const UsersPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [pagination.page, pagination.limit, filters.role, filters.isActive, debouncedSearch]);
+
+  // Load users when filters or pagination change
+  useEffect(() => {
+    loadUsers();
+  }, [loadUsers]);
 
   // CRUD operations
   const handleCreateUser = async (e: React.FormEvent) => {

@@ -10,7 +10,8 @@ import {
   ChartBarIcon,
   XMarkIcon,
   Cog6ToothIcon,
-  ShieldCheckIcon
+  ShieldCheckIcon,
+  DocumentTextIcon
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../store/AuthContext';
 import { Role } from '../../types';
@@ -27,6 +28,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
   const navigation = [
     { name: 'Tablero', href: '/dashboard', icon: HomeIcon, roles: [Role.ADMIN, Role.RECEPTIONIST, Role.TRAINER] },
     { name: 'Validación', href: '/validation', icon: ShieldCheckIcon, roles: [Role.ADMIN, Role.RECEPTIONIST, Role.TRAINER] },
+    { name: 'Registros de Validación', href: '/validation-logs', icon: DocumentTextIcon, roles: [Role.ADMIN, Role.RECEPTIONIST] },
     { name: 'Usuarios', href: '/users', icon: UsersIcon, roles: [Role.ADMIN, Role.RECEPTIONIST] },
     { name: 'Membresías', href: '/memberships', icon: CreditCardIcon, roles: [Role.ADMIN, Role.RECEPTIONIST] },
     { name: 'Pagos', href: '/payments', icon: CreditCardIcon, roles: [Role.ADMIN, Role.RECEPTIONIST] },
@@ -42,7 +44,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
       <div className="flex items-center h-16 px-4 bg-primary-600">
-        <h1 className="text-xl font-bold text-white">Gym Manager</h1>
+        <h1 className="text-xl font-bold text-white">Fusion Training</h1>
       </div>
       
       <nav className="flex-1 px-2 py-4 bg-white overflow-y-auto">

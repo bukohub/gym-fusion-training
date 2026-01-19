@@ -8,9 +8,9 @@ export declare class UsersService {
     create(createUserDto: CreateUserDto): Promise<{
         id: string;
         email: string;
+        cedula: string;
         firstName: string;
         lastName: string;
-        cedula: string;
         phone: string;
         role: string;
         avatar: string;
@@ -20,13 +20,13 @@ export declare class UsersService {
         createdAt: Date;
         updatedAt: Date;
     }>;
-    findAll(page?: number, limit?: number, role?: Role, search?: string): Promise<{
+    findAll(page?: number, limit?: number, role?: Role, isActive?: boolean, search?: string): Promise<{
         users: {
             id: string;
             email: string;
+            cedula: string;
             firstName: string;
             lastName: string;
-            cedula: string;
             phone: string;
             role: string;
             avatar: string;
@@ -46,9 +46,9 @@ export declare class UsersService {
     findOne(id: string): Promise<{
         id: string;
         email: string;
+        cedula: string;
         firstName: string;
         lastName: string;
-        cedula: string;
         phone: string;
         role: string;
         avatar: string;
@@ -74,23 +74,23 @@ export declare class UsersService {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            userId: string;
-            planId: string;
             startDate: Date;
             endDate: Date;
             status: string;
+            userId: string;
+            planId: string;
         })[];
         payments: {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            userId: string;
+            description: string | null;
             status: string;
-            membershipId: string | null;
+            userId: string;
             amount: number;
             method: string;
-            description: string | null;
             transactionId: string | null;
+            membershipId: string | null;
         }[];
         bookedClasses: ({
             class: {
@@ -103,12 +103,12 @@ export declare class UsersService {
                 createdAt: Date;
                 updatedAt: Date;
                 name: string;
-                status: string;
                 description: string | null;
-                trainerId: string;
+                status: string;
                 startTime: Date;
                 endTime: Date;
                 maxCapacity: number;
+                trainerId: string;
             };
         } & {
             id: string;
@@ -123,9 +123,9 @@ export declare class UsersService {
     update(id: string, updateUserDto: UpdateUserDto): Promise<{
         id: string;
         email: string;
+        cedula: string;
         firstName: string;
         lastName: string;
-        cedula: string;
         phone: string;
         role: string;
         avatar: string;
@@ -141,9 +141,9 @@ export declare class UsersService {
     deactivate(id: string): Promise<{
         id: string;
         email: string;
+        cedula: string;
         firstName: string;
         lastName: string;
-        cedula: string;
         photo: string;
         holler: string;
         isActive: boolean;
@@ -151,9 +151,9 @@ export declare class UsersService {
     activate(id: string): Promise<{
         id: string;
         email: string;
+        cedula: string;
         firstName: string;
         lastName: string;
-        cedula: string;
         photo: string;
         holler: string;
         isActive: boolean;

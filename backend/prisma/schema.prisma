@@ -36,6 +36,7 @@ model User {
   trainedClasses    Class[]     @relation("TrainerClasses")
   bookedClasses     ClassBooking[]
   accessLogs        AccessLog[]
+  validationLogs    ValidationLog[]
   createdInvoices   Invoice[]   @relation("CreatedBy")
 
   @@map("users")
@@ -191,4 +192,19 @@ model AccessLog {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("access_logs")
+}
+
+model ValidationLog {
+  id            String   @id @default(uuid())
+  userId        String?  // Nullable in case validation fails and user not found
+  identifier    String   // The cedula or holler used for validation
+  validationType String  // "CEDULA" or "HOLLER"
+  success       Boolean  @default(false)
+  reason        String?  // Reason for failure (expired, not found, inactive, etc.)
+  validatedAt   DateTime @default(now())
+
+  // Relations
+  user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("validation_logs")
 }

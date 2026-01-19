@@ -29,8 +29,8 @@ let UsersController = class UsersController {
     create(createUserDto) {
         return this.usersService.create(createUserDto);
     }
-    findAll(page = 1, limit = 10, role, search) {
-        return this.usersService.findAll(page, limit, role, search);
+    findAll(page = 1, limit = 10, role, isActive, search) {
+        return this.usersService.findAll(page, limit, role, isActive, search);
     }
     getUserStats() {
         return this.usersService.getUserStats();
@@ -70,13 +70,15 @@ __decorate([
     (0, swagger_1.ApiQuery)({ name: 'page', required: false, type: Number }),
     (0, swagger_1.ApiQuery)({ name: 'limit', required: false, type: Number }),
     (0, swagger_1.ApiQuery)({ name: 'role', required: false, enum: roles_1.Role }),
+    (0, swagger_1.ApiQuery)({ name: 'isActive', required: false, type: Boolean }),
     (0, swagger_1.ApiQuery)({ name: 'search', required: false, type: String }),
     __param(0, (0, common_1.Query)('page', new common_1.ParseIntPipe({ optional: true }))),
     __param(1, (0, common_1.Query)('limit', new common_1.ParseIntPipe({ optional: true }))),
     __param(2, (0, common_1.Query)('role')),
-    __param(3, (0, common_1.Query)('search')),
+    __param(3, (0, common_1.Query)('isActive')),
+    __param(4, (0, common_1.Query)('search')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object, String, String]),
+    __metadata("design:paramtypes", [Object, Object, String, Boolean, String]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "findAll", null);
 __decorate([

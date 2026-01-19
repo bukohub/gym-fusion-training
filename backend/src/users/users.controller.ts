@@ -42,14 +42,16 @@ export class UsersController {
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
   @ApiQuery({ name: 'role', required: false, enum: Role })
+  @ApiQuery({ name: 'isActive', required: false, type: Boolean })
   @ApiQuery({ name: 'search', required: false, type: String })
   findAll(
     @Query('page', new ParseIntPipe({ optional: true })) page = 1,
     @Query('limit', new ParseIntPipe({ optional: true })) limit = 10,
     @Query('role') role?: Role,
+    @Query('isActive') isActive?: boolean,
     @Query('search') search?: string,
   ) {
-    return this.usersService.findAll(page, limit, role, search);
+    return this.usersService.findAll(page, limit, role, isActive, search);
   }
 
   @Get('stats')

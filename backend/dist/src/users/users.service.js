@@ -52,15 +52,17 @@ let UsersService = class UsersService {
             },
         });
     }
-    async findAll(page = 1, limit = 10, role, search) {
+    async findAll(page = 1, limit = 10, role, isActive, search) {
         const offset = (page - 1) * limit;
         const where = {
             ...(role && { role }),
+            ...(typeof isActive === 'boolean' && { isActive }),
             ...(search && {
                 OR: [
-                    { firstName: { contains: search, mode: 'insensitive' } },
-                    { lastName: { contains: search, mode: 'insensitive' } },
-                    { email: { contains: search, mode: 'insensitive' } },
+                    { firstName: { contains: search } },
+                    { lastName: { contains: search } },
+                    { email: { contains: search } },
+                    { cedula: { contains: search } },
                 ],
             }),
         };

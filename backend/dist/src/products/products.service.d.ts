@@ -26,9 +26,9 @@ export declare class ProductsService {
                 createdAt: Date;
                 productId: string;
                 quantity: number;
-                soldBy: string;
                 unitPrice: number;
                 totalPrice: number;
+                soldBy: string;
             }[];
             id: string;
             isActive: boolean;
@@ -57,9 +57,9 @@ export declare class ProductsService {
             createdAt: Date;
             productId: string;
             quantity: number;
-            soldBy: string;
             unitPrice: number;
             totalPrice: number;
+            soldBy: string;
         }[];
         id: string;
         isActive: boolean;
@@ -133,9 +133,9 @@ export declare class ProductsService {
         createdAt: Date;
         productId: string;
         quantity: number;
-        soldBy: string;
         unitPrice: number;
         totalPrice: number;
+        soldBy: string;
     }>;
     findAllSales(page?: number, limit?: number, productId?: string, soldBy?: string, startDate?: string, endDate?: string): Promise<{
         sales: ({
@@ -156,9 +156,9 @@ export declare class ProductsService {
             createdAt: Date;
             productId: string;
             quantity: number;
-            soldBy: string;
             unitPrice: number;
             totalPrice: number;
+            soldBy: string;
         })[];
         pagination: {
             total: number;
@@ -185,9 +185,9 @@ export declare class ProductsService {
         createdAt: Date;
         productId: string;
         quantity: number;
-        soldBy: string;
         unitPrice: number;
         totalPrice: number;
+        soldBy: string;
     }>;
     getProductStats(): Promise<{
         totalProducts: number;
