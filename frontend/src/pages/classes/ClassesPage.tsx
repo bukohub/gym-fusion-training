@@ -64,7 +64,7 @@ const ClassesPage: React.FC = () => {
         totalPages: response.data.pagination?.totalPages || 0,
       }));
     } catch (error) {
-      toast.error('Failed to load classes');
+      toast.error('Error al cargar clases');
       setClasses([]);
       setPagination(prev => ({
         ...prev,
@@ -92,7 +92,7 @@ const ClassesPage: React.FC = () => {
         totalPages: Math.ceil(allBookings.length / pagination.limit),
       }));
     } catch (error) {
-      toast.error('Failed to load bookings');
+      toast.error('Error al cargar reservas');
     } finally {
       setLoading(false);
     }
@@ -103,7 +103,7 @@ const ClassesPage: React.FC = () => {
       const response = await usersApi.getTrainers();
       setTrainers(response.data);
     } catch (error) {
-      toast.error('Failed to load trainers');
+      toast.error('Error al cargar entrenadores');
     }
   };
 
@@ -112,7 +112,7 @@ const ClassesPage: React.FC = () => {
       const response = await usersApi.getClients();
       setClients(response.data.data);
     } catch (error) {
-      toast.error('Failed to load clients');
+      toast.error('Error al cargar clientes');
     }
   };
 
@@ -121,12 +121,12 @@ const ClassesPage: React.FC = () => {
     e.preventDefault();
     try {
       await classesApi.create(classForm);
-      toast.success('Class created successfully');
+      toast.success('Clase creada exitosamente');
       setIsModalOpen(false);
       loadClasses();
       resetClassForm();
     } catch (error) {
-      toast.error('Failed to create class');
+      toast.error('Error al crear clase');
     }
   };
 
@@ -135,23 +135,23 @@ const ClassesPage: React.FC = () => {
     if (!selectedClass) return;
     try {
       await classesApi.update(selectedClass.id, classForm);
-      toast.success('Class updated successfully');
+      toast.success('Clase actualizada exitosamente');
       setIsModalOpen(false);
       loadClasses();
       resetClassForm();
     } catch (error) {
-      toast.error('Failed to update class');
+      toast.error('Error al actualizar clase');
     }
   };
 
   const handleDeleteClass = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this class?')) {
+    if (window.confirm('¿Está seguro de que desea eliminar esta clase?')) {
       try {
         await classesApi.delete(id);
-        toast.success('Class deleted successfully');
+        toast.success('Clase eliminada exitosamente');
         loadClasses();
       } catch (error) {
-        toast.error('Failed to delete class');
+        toast.error('Error al eliminar clase');
       }
     }
   };
@@ -161,23 +161,23 @@ const ClassesPage: React.FC = () => {
     e.preventDefault();
     try {
       await classesApi.bookClass(bookingForm);
-      toast.success('Class booked successfully');
+      toast.success('Clase reservada exitosamente');
       setIsModalOpen(false);
       loadBookings();
       resetBookingForm();
     } catch (error) {
-      toast.error('Failed to book class');
+      toast.error('Error al reservar clase');
     }
   };
 
   const handleCancelBooking = async (userId: string, classId: string) => {
-    if (window.confirm('Are you sure you want to cancel this booking?')) {
+    if (window.confirm('¿Está seguro de que desea cancelar esta reserva?')) {
       try {
         await classesApi.cancelBooking(userId, classId);
-        toast.success('Booking cancelled successfully');
+        toast.success('Reserva cancelada exitosamente');
         loadBookings();
       } catch (error) {
-        toast.error('Failed to cancel booking');
+        toast.error('Error al cancelar reserva');
       }
     }
   };
@@ -185,10 +185,10 @@ const ClassesPage: React.FC = () => {
   const handleMarkAttendance = async (bookingId: string, attended: boolean) => {
     try {
       await classesApi.markAttendance(bookingId, attended);
-      toast.success(`Attendance marked as ${attended ? 'present' : 'absent'}`);
+      toast.success(`Asistencia marcada como ${attended ? 'presente' : 'ausente'}`);
       loadBookings();
     } catch (error) {
-      toast.error('Failed to mark attendance');
+      toast.error('Error al marcar asistencia');
     }
   };
 
@@ -277,20 +277,20 @@ const ClassesPage: React.FC = () => {
     },
     {
       key: 'id',
-      label: 'Actions',
+      label: 'Acciones',
       render: (_, item) => (
         <div className="flex space-x-2">
           <button
             onClick={() => openEditModal(item)}
             className="text-indigo-600 hover:text-indigo-900 text-sm"
           >
-            Edit
+            Editar
           </button>
           <button
             onClick={() => handleDeleteClass(item.id)}
             className="text-red-600 hover:text-red-900 text-sm"
           >
-            Delete
+            Eliminar
           </button>
         </div>
       ),
@@ -300,23 +300,23 @@ const ClassesPage: React.FC = () => {
   const bookingColumns: TableColumn<ClassBooking>[] = [
     {
       key: 'user',
-      label: 'Member',
+      label: 'Miembro',
       render: (user) => user ? `${user.firstName} ${user.lastName}` : 'N/A',
     },
     {
       key: 'class',
-      label: 'Class',
+      label: 'Clase',
       render: (cls) => cls?.name || 'N/A',
     },
     {
       key: 'bookedAt',
-      label: 'Booked At',
+      label: 'Reservado el',
       render: (value) => new Date(value).toLocaleString(),
       sortable: true,
     },
     {
       key: 'attended',
-      label: 'Attendance',
+      label: 'Asistencia',
       render: (value, item) => (
         <div className="flex items-center space-x-2">
           <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
@@ -324,7 +324,7 @@ const ClassesPage: React.FC = () => {
             value === false ? 'bg-red-100 text-red-800' :
             'bg-gray-100 text-gray-800'
           }`}>
-            {value === true ? 'Present' : value === false ? 'Absent' : 'Pending'}
+            {value === true ? 'Presente' : value === false ? 'Ausente' : 'Pendiente'}
           </span>
           {value === null && (
             <div className="flex space-x-1">
@@ -332,13 +332,13 @@ const ClassesPage: React.FC = () => {
                 onClick={() => handleMarkAttendance(item.id, true)}
                 className="text-green-600 hover:text-green-900 text-xs"
               >
-                Present
+                Presente
               </button>
               <button
                 onClick={() => handleMarkAttendance(item.id, false)}
                 className="text-red-600 hover:text-red-900 text-xs"
               >
-                Absent
+                Ausente
               </button>
             </div>
           )}
@@ -347,13 +347,13 @@ const ClassesPage: React.FC = () => {
     },
     {
       key: 'id',
-      label: 'Actions',
+      label: 'Acciones',
       render: (_, item) => (
         <button
           onClick={() => handleCancelBooking(item.userId, item.classId)}
           className="text-red-600 hover:text-red-900 text-sm"
         >
-          Cancel
+          Cancelar
         </button>
       ),
     },
@@ -362,14 +362,14 @@ const ClassesPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">Classes</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Clases</h1>
         <div className="flex space-x-2">
           {activeTab === 'bookings' && (
             <button
               onClick={openBookModal}
               className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium"
             >
-              Book Class
+              Reservar Clase
             </button>
           )}
           {activeTab === 'classes' && (
@@ -377,7 +377,7 @@ const ClassesPage: React.FC = () => {
               onClick={openCreateModal}
               className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium"
             >
-              Schedule Class
+              Programar Clase
             </button>
           )}
         </div>
@@ -387,8 +387,8 @@ const ClassesPage: React.FC = () => {
       <div className="border-b border-gray-200">
         <nav className="-mb-px flex space-x-8">
           {[
-            { key: 'classes', label: 'Classes' },
-            { key: 'bookings', label: 'Bookings' },
+            { key: 'classes', label: 'Clases' },
+            { key: 'bookings', label: 'Reservas' },
           ].map((tab) => (
             <button
               key={tab.key}
@@ -437,23 +437,23 @@ const ClassesPage: React.FC = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         title={
-          modalType === 'create' ? 'Schedule Class' : 
-          modalType === 'edit' ? 'Edit Class' : 
-          'Book Class'
+          modalType === 'create' ? 'Programar Clase' :
+          modalType === 'edit' ? 'Editar Clase' :
+          'Reservar Clase'
         }
         size="md"
       >
         {modalType === 'book' ? (
           <form onSubmit={handleBookClass} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Member</label>
+              <label className="block text-sm font-medium text-gray-700">Miembro</label>
               <select
                 value={bookingForm.userId}
                 onChange={(e) => setBookingForm(prev => ({ ...prev, userId: e.target.value }))}
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                 required
               >
-                <option value="">Select a member</option>
+                <option value="">Seleccionar un miembro</option>
                 {clients.map(client => (
                   <option key={client.id} value={client.id}>
                     {client.firstName} {client.lastName} ({client.email})
@@ -462,14 +462,14 @@ const ClassesPage: React.FC = () => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Class</label>
+              <label className="block text-sm font-medium text-gray-700">Clase</label>
               <select
                 value={bookingForm.classId}
                 onChange={(e) => setBookingForm(prev => ({ ...prev, classId: e.target.value }))}
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                 required
               >
-                <option value="">Select a class</option>
+                <option value="">Seleccionar una clase</option>
                 {classes.filter(cls => cls.status === 'SCHEDULED' && new Date(cls.startTime) > new Date()).map(cls => (
                   <option key={cls.id} value={cls.id}>
                     {cls.name} - {new Date(cls.startTime).toLocaleString()} ({cls.bookings?.length || 0}/{cls.maxCapacity})
@@ -483,20 +483,20 @@ const ClassesPage: React.FC = () => {
                 onClick={() => setIsModalOpen(false)}
                 className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
-                Cancel
+                Cancelar
               </button>
               <button
                 type="submit"
                 className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700"
               >
-                Book Class
+                Reservar Clase
               </button>
             </div>
           </form>
         ) : (
           <form onSubmit={modalType === 'create' ? handleCreateClass : handleUpdateClass} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Class Name</label>
+              <label className="block text-sm font-medium text-gray-700">Nombre de Clase</label>
               <input
                 type="text"
                 value={classForm.name}
@@ -506,7 +506,7 @@ const ClassesPage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Description</label>
+              <label className="block text-sm font-medium text-gray-700">Descripción</label>
               <textarea
                 value={classForm.description}
                 onChange={(e) => setClassForm(prev => ({ ...prev, description: e.target.value }))}
@@ -515,14 +515,14 @@ const ClassesPage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Trainer</label>
+              <label className="block text-sm font-medium text-gray-700">Entrenador</label>
               <select
                 value={classForm.trainerId}
                 onChange={(e) => setClassForm(prev => ({ ...prev, trainerId: e.target.value }))}
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                 required
               >
-                <option value="">Select a trainer</option>
+                <option value="">Seleccionar un entrenador</option>
                 {trainers.map(trainer => (
                   <option key={trainer.id} value={trainer.id}>
                     {trainer.firstName} {trainer.lastName}
@@ -531,7 +531,7 @@ const ClassesPage: React.FC = () => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Start Time</label>
+              <label className="block text-sm font-medium text-gray-700">Hora de Inicio</label>
               <input
                 type="datetime-local"
                 value={classForm.startTime}
@@ -541,7 +541,7 @@ const ClassesPage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">End Time</label>
+              <label className="block text-sm font-medium text-gray-700">Hora de Fin</label>
               <input
                 type="datetime-local"
                 value={classForm.endTime}
@@ -551,7 +551,7 @@ const ClassesPage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Max Capacity</label>
+              <label className="block text-sm font-medium text-gray-700">Capacidad Máxima</label>
               <input
                 type="number"
                 value={classForm.maxCapacity}
@@ -567,13 +567,13 @@ const ClassesPage: React.FC = () => {
                 onClick={() => setIsModalOpen(false)}
                 className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
-                Cancel
+                Cancelar
               </button>
               <button
                 type="submit"
                 className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
               >
-                {modalType === 'create' ? 'Schedule' : 'Update'}
+                {modalType === 'create' ? 'Programar' : 'Actualizar'}
               </button>
             </div>
           </form>

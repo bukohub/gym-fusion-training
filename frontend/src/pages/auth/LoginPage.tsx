@@ -42,9 +42,12 @@ const LoginPage: React.FC = () => {
       <div className="max-w-md w-full space-y-8">
         <div>
           <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-primary-600">
-            <span className="text-white font-bold text-xl">G</span>
+            <span className="text-white font-bold text-lg">FT</span>
           </div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          <h1 className="mt-4 text-center text-xl font-bold text-primary-600">
+            Fusion Training
+          </h1>
+          <h2 className="mt-4 text-center text-3xl font-extrabold text-gray-900">
             Inicia sesión en tu cuenta
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">

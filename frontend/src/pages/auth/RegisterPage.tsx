@@ -8,11 +8,11 @@ import { RegisterData, Role } from '../../types';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
 const schema = yup.object({
-  firstName: yup.string().required('First name is required'),
-  lastName: yup.string().required('Last name is required'),
-  email: yup.string().email('Invalid email').required('Email is required'),
-  password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
-  cedula: yup.string().required('Cedula is required'),
+  firstName: yup.string().required('El nombre es requerido'),
+  lastName: yup.string().required('El apellido es requerido'),
+  email: yup.string().email('Email inválido').required('El email es requerido'),
+  password: yup.string().min(6, 'La contraseña debe tener al menos 6 caracteres').required('La contraseña es requerida'),
+  cedula: yup.string().required('La cédula es requerida'),
   phone: yup.string().optional(),
   role: yup.mixed<Role>().oneOf(Object.values(Role)).optional(),
   photo: yup.string().optional(),
@@ -49,18 +49,21 @@ const RegisterPage: React.FC = () => {
       <div className="max-w-md w-full space-y-8">
         <div>
           <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-primary-600">
-            <span className="text-white font-bold text-xl">G</span>
+            <span className="text-white font-bold text-lg">FT</span>
           </div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your account
+          <h1 className="mt-4 text-center text-xl font-bold text-primary-600">
+            Fusion Training
+          </h1>
+          <h2 className="mt-4 text-center text-3xl font-extrabold text-gray-900">
+            Crea tu cuenta
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Or{' '}
+            O{' '}
             <Link
               to="/login"
               className="font-medium text-primary-600 hover:text-primary-500"
             >
-              sign in to your existing account
+              inicia sesión en tu cuenta existente
             </Link>
           </p>
         </div>
@@ -70,28 +73,28 @@ const RegisterPage: React.FC = () => {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
-                  First Name
+                  Nombre
                 </label>
                 <input
                   {...register('firstName')}
                   type="text"
                   className={`mt-1 input ${errors.firstName ? 'input-error' : ''}`}
-                  placeholder="First name"
+                  placeholder="Nombre"
                 />
                 {errors.firstName && (
                   <p className="mt-1 text-sm text-red-600">{errors.firstName.message}</p>
                 )}
               </div>
-              
+
               <div>
                 <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
-                  Last Name
+                  Apellido
                 </label>
                 <input
                   {...register('lastName')}
                   type="text"
                   className={`mt-1 input ${errors.lastName ? 'input-error' : ''}`}
-                  placeholder="Last name"
+                  placeholder="Apellido"
                 />
                 {errors.lastName && (
                   <p className="mt-1 text-sm text-red-600">{errors.lastName.message}</p>
@@ -108,22 +111,22 @@ const RegisterPage: React.FC = () => {
                 type="email"
                 autoComplete="email"
                 className={`mt-1 input ${errors.email ? 'input-error' : ''}`}
-                placeholder="Email address"
+                placeholder="Dirección de email"
               />
               {errors.email && (
                 <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
               )}
             </div>
-            
+
             <div>
               <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                Phone (Optional)
+                Teléfono (Opcional)
               </label>
               <input
                 {...register('phone')}
                 type="tel"
                 className="mt-1 input"
-                placeholder="Phone number"
+                placeholder="Número de teléfono"
               />
             </div>
 
@@ -144,14 +147,14 @@ const RegisterPage: React.FC = () => {
             
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
+                Contraseña
               </label>
               <input
                 {...register('password')}
                 type="password"
                 autoComplete="new-password"
                 className={`mt-1 input ${errors.password ? 'input-error' : ''}`}
-                placeholder="Password"
+                placeholder="Contraseña"
               />
               {errors.password && (
                 <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
@@ -165,7 +168,7 @@ const RegisterPage: React.FC = () => {
               disabled={isLoading}
               className="btn btn-primary btn-lg w-full"
             >
-              {isLoading ? <LoadingSpinner size="sm" /> : 'Create Account'}
+              {isLoading ? <LoadingSpinner size="sm" /> : 'Crear Cuenta'}
             </button>
           </div>
         </form>

@@ -33,9 +33,12 @@ const Header: React.FC<HeaderProps> = ({ setSidebarOpen }) => {
       
       <div className="flex-1 px-4 flex justify-between">
         <div className="flex-1 flex items-center">
-          <h2 className="text-lg font-medium text-gray-900 capitalize">
-            {/* You can add page title here based on route */}
-          </h2>
+          <div className="hidden lg:block">
+            <h2 className="text-lg font-medium text-primary-600">
+              Fusion Training
+            </h2>
+            <p className="text-xs text-gray-500">Sistema de Gestión</p>
+          </div>
         </div>
         
         <div className="ml-4 flex items-center md:ml-6">
