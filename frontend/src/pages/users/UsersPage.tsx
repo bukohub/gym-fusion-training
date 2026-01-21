@@ -76,7 +76,7 @@ const UsersPage: React.FC = () => {
         filters.isActive === '' ? undefined : filters.isActive === 'true',
         debouncedSearch || undefined
       );
-      setUsers(response.data.users || []);
+      setUsers((response.data as any).users || (response.data as any).data || []);
       setPagination(prev => ({
         ...prev,
         total: response.data.pagination?.total || 0,
