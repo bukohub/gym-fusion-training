@@ -76,7 +76,7 @@ const ValidationLogsPage: React.FC = () => {
       const response = await validationLogsApi.getStats();
       setStats(response.data);
     } catch (error) {
-      console.error('Error loading validation stats:', error);
+      console.error('Error al cargar estadísticas de validación:', error);
     }
   };
 

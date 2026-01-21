@@ -67,14 +67,20 @@ const PaymentsPage: React.FC = () => {
         filters.startDate || undefined,
         filters.endDate || undefined
       );
-      setPayments(response.data.data);
+      setPayments((response.data as any).payments || (response.data as any).data || []);
       setPagination(prev => ({
         ...prev,
-        total: response.data.pagination.total,
-        totalPages: response.data.pagination.totalPages,
+        total: response.data.pagination?.total || 0,
+        totalPages: response.data.pagination?.totalPages || 0,
       }));
     } catch (error) {
-      toast.error('Failed to load payments');
+      toast.error('Error al cargar los pagos');
+      setPayments([]);
+      setPagination(prev => ({
+        ...prev,
+        total: 0,
+        totalPages: 0,
+      }));
     } finally {
       setLoading(false);
     }
@@ -83,18 +89,20 @@ const PaymentsPage: React.FC = () => {
   const loadUsers = async () => {
     try {
       const response = await usersApi.getAll(1, 100);
-      setUsers(response.data.data);
+      setUsers((response.data as any).users || (response.data as any).data || []);
     } catch (error) {
-      toast.error('Failed to load users');
+      toast.error('Error al cargar los usuarios');
+      setUsers([]);
     }
   };
 
   const loadMemberships = async () => {
     try {
       const response = await membershipsApi.getAll(1, 100);
-      setMemberships(response.data.data);
+      setMemberships((response.data as any).memberships || (response.data as any).data || []);
     } catch (error) {
-      toast.error('Failed to load memberships');
+      toast.error('Error al cargar las membresías');
+      setMemberships([]);
     }
   };
 
@@ -103,12 +111,12 @@ const PaymentsPage: React.FC = () => {
     e.preventDefault();
     try {
       await paymentsApi.create(paymentForm);
-      toast.success('Payment created successfully');
+      toast.success('Pago procesado exitosamente');
       setIsModalOpen(false);
       loadPayments();
       resetPaymentForm();
     } catch (error) {
-      toast.error('Failed to create payment');
+      toast.error('Error al procesar el pago');
     }
   };
 
@@ -119,22 +127,22 @@ const PaymentsPage: React.FC = () => {
       await paymentsApi.update(selectedPayment.id, {
         description: paymentForm.description,
       });
-      toast.success('Payment updated successfully');
+      toast.success('Pago actualizado exitosamente');
       setIsModalOpen(false);
       loadPayments();
       resetPaymentForm();
     } catch (error) {
-      toast.error('Failed to update payment');
+      toast.error('Error al actualizar el pago');
     }
   };
 
   const handleProcessPayment = async (id: string) => {
     try {
       await paymentsApi.process(id);
-      toast.success('Payment processed successfully');
+      toast.success('Pago procesado exitosamente');
       loadPayments();
     } catch (error) {
-      toast.error('Failed to process payment');
+      toast.error('Error al procesar el pago');
     }
   };
 
@@ -143,23 +151,23 @@ const PaymentsPage: React.FC = () => {
     if (!selectedPayment) return;
     try {
       await paymentsApi.refund(selectedPayment.id, refundForm.reason);
-      toast.success('Payment refunded successfully');
+      toast.success('Pago reembolsado exitosamente');
       setIsModalOpen(false);
       loadPayments();
       resetRefundForm();
     } catch (error) {
-      toast.error('Failed to refund payment');
+      toast.error('Error al reembolsar el pago');
     }
   };
 
   const handleDeletePayment = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this payment?')) {
+    if (window.confirm('¿Está seguro que desea eliminar este pago?')) {
       try {
         await paymentsApi.delete(id);
-        toast.success('Payment deleted successfully');
+        toast.success('Pago eliminado exitosamente');
         loadPayments();
       } catch (error) {
-        toast.error('Failed to delete payment');
+        toast.error('Error al eliminar el pago');
       }
     }
   };
@@ -212,14 +220,14 @@ const PaymentsPage: React.FC = () => {
   const paymentColumns: TableColumn<Payment>[] = [
     {
       key: 'user',
-      label: 'Customer',
+      label: 'Cliente',
       render: (user) => user ? `${user.firstName} ${user.lastName}` : 'N/A',
     },
-    { key: 'amount', label: 'Amount', render: (value) => `$${value}`, sortable: true },
-    { key: 'method', label: 'Method', sortable: true },
+    { key: 'amount', label: 'Monto', render: (value) => `$${value}`, sortable: true },
+    { key: 'method', label: 'Método', sortable: true },
     {
       key: 'status',
-      label: 'Status',
+      label: 'Estado',
       render: (value) => (
         <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
           value === 'COMPLETED' ? 'bg-green-100 text-green-800' :
@@ -232,16 +240,16 @@ const PaymentsPage: React.FC = () => {
       ),
       sortable: true,
     },
-    { key: 'description', label: 'Description' },
+    { key: 'description', label: 'Descripción' },
     {
       key: 'createdAt',
-      label: 'Date',
+      label: 'Fecha',
       render: (value) => new Date(value).toLocaleDateString(),
       sortable: true,
     },
     {
       key: 'id',
-      label: 'Actions',
+      label: 'Acciones',
       render: (_, item) => (
         <div className="flex space-x-2">
           <button
@@ -280,12 +288,12 @@ const PaymentsPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">Payments</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Pagos</h1>
         <button
           onClick={openCreateModal}
           className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium"
         >
-          Process Payment
+          Procesar Pago
         </button>
       </div>
 
@@ -293,40 +301,40 @@ const PaymentsPage: React.FC = () => {
       <div className="bg-white p-4 rounded-lg shadow space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Status</label>
+            <label className="block text-sm font-medium text-gray-700">Estado</label>
             <select
               value={filters.status}
               onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
             >
-              <option value="">All Statuses</option>
-              <option value="PENDING">Pending</option>
-              <option value="COMPLETED">Completed</option>
-              <option value="FAILED">Failed</option>
-              <option value="REFUNDED">Refunded</option>
+              <option value="">Todos los Estados</option>
+              <option value="PENDING">Pendiente</option>
+              <option value="COMPLETED">Completado</option>
+              <option value="FAILED">Fallido</option>
+              <option value="REFUNDED">Reembolsado</option>
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Method</label>
+            <label className="block text-sm font-medium text-gray-700">Método</label>
             <select
               value={filters.method}
               onChange={(e) => setFilters(prev => ({ ...prev, method: e.target.value }))}
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
             >
-              <option value="">All Methods</option>
-              <option value="CASH">Cash</option>
-              <option value="CARD">Card</option>
-              <option value="TRANSFER">Transfer</option>
+              <option value="">Todos los Métodos</option>
+              <option value="CASH">Efectivo</option>
+              <option value="CARD">Tarjeta</option>
+              <option value="TRANSFER">Transferencia</option>
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Customer</label>
+            <label className="block text-sm font-medium text-gray-700">Cliente</label>
             <select
               value={filters.userId}
               onChange={(e) => setFilters(prev => ({ ...prev, userId: e.target.value }))}
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
             >
-              <option value="">All Customers</option>
+              <option value="">Todos los Clientes</option>
               {users.map(user => (
                 <option key={user.id} value={user.id}>
                   {user.firstName} {user.lastName}
@@ -335,7 +343,7 @@ const PaymentsPage: React.FC = () => {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">From Date</label>
+            <label className="block text-sm font-medium text-gray-700">Fecha Desde</label>
             <input
               type="date"
               value={filters.startDate}
@@ -344,7 +352,7 @@ const PaymentsPage: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">To Date</label>
+            <label className="block text-sm font-medium text-gray-700">Fecha Hasta</label>
             <input
               type="date"
               value={filters.endDate}
@@ -378,29 +386,29 @@ const PaymentsPage: React.FC = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         title={
-          modalType === 'create' ? 'Process Payment' :
-          modalType === 'edit' ? 'Edit Payment' :
-          'Refund Payment'
+          modalType === 'create' ? 'Procesar Pago' :
+          modalType === 'edit' ? 'Editar Pago' :
+          'Reembolsar Pago'
         }
         size="md"
       >
         {modalType === 'refund' ? (
           <form onSubmit={handleRefundPayment} className="space-y-4">
             <div className="bg-gray-50 p-4 rounded-md">
-              <h4 className="font-medium text-gray-900">Payment Details</h4>
-              <p className="text-sm text-gray-600">Amount: ${selectedPayment?.amount}</p>
-              <p className="text-sm text-gray-600">Method: {selectedPayment?.method}</p>
-              <p className="text-sm text-gray-600">Date: {selectedPayment ? new Date(selectedPayment.createdAt).toLocaleDateString() : ''}</p>
+              <h4 className="font-medium text-gray-900">Detalles del Pago</h4>
+              <p className="text-sm text-gray-600">Monto: ${selectedPayment?.amount}</p>
+              <p className="text-sm text-gray-600">Método: {selectedPayment?.method}</p>
+              <p className="text-sm text-gray-600">Fecha: {selectedPayment ? new Date(selectedPayment.createdAt).toLocaleDateString() : ''}</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Refund Reason</label>
+              <label className="block text-sm font-medium text-gray-700">Motivo del Reembolso</label>
               <textarea
                 value={refundForm.reason}
                 onChange={(e) => setRefundForm(prev => ({ ...prev, reason: e.target.value }))}
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                 rows={3}
                 required
-                placeholder="Please provide a reason for the refund..."
+                placeholder="Por favor proporcione el motivo del reembolso..."
               />
             </div>
             <div className="flex justify-end space-x-3">
@@ -409,20 +417,20 @@ const PaymentsPage: React.FC = () => {
                 onClick={() => setIsModalOpen(false)}
                 className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
-                Cancel
+                Cancelar
               </button>
               <button
                 type="submit"
                 className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700"
               >
-                Process Refund
+                Procesar Reembolso
               </button>
             </div>
           </form>
         ) : (
           <form onSubmit={modalType === 'create' ? handleCreatePayment : handleUpdatePayment} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Customer</label>
+              <label className="block text-sm font-medium text-gray-700">Cliente</label>
               <select
                 value={paymentForm.userId}
                 onChange={(e) => setPaymentForm(prev => ({ ...prev, userId: e.target.value }))}
@@ -430,7 +438,7 @@ const PaymentsPage: React.FC = () => {
                 required
                 disabled={modalType === 'edit'}
               >
-                <option value="">Select a customer</option>
+                <option value="">Seleccionar cliente</option>
                 {users.map(user => (
                   <option key={user.id} value={user.id}>
                     {user.firstName} {user.lastName} ({user.email})
@@ -439,14 +447,14 @@ const PaymentsPage: React.FC = () => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Membership (Optional)</label>
+              <label className="block text-sm font-medium text-gray-700">Membresía (Opcional)</label>
               <select
                 value={paymentForm.membershipId}
                 onChange={(e) => setPaymentForm(prev => ({ ...prev, membershipId: e.target.value }))}
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                 disabled={modalType === 'edit'}
               >
-                <option value="">No membership</option>
+                <option value="">Sin membresía</option>
                 {memberships.filter(m => m.userId === paymentForm.userId).map(membership => (
                   <option key={membership.id} value={membership.id}>
                     {membership.plan?.name} - {new Date(membership.startDate).toLocaleDateString()}
@@ -456,7 +464,7 @@ const PaymentsPage: React.FC = () => {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">Amount ($)</label>
+                <label className="block text-sm font-medium text-gray-700">Monto ($)</label>
                 <input
                   type="number"
                   step="0.01"
@@ -469,7 +477,7 @@ const PaymentsPage: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Payment Method</label>
+                <label className="block text-sm font-medium text-gray-700">Método de Pago</label>
                 <select
                   value={paymentForm.method}
                   onChange={(e) => setPaymentForm(prev => ({ ...prev, method: e.target.value }))}
@@ -477,20 +485,20 @@ const PaymentsPage: React.FC = () => {
                   required
                   disabled={modalType === 'edit'}
                 >
-                  <option value="CASH">Cash</option>
-                  <option value="CARD">Card</option>
-                  <option value="TRANSFER">Bank Transfer</option>
+                  <option value="CASH">Efectivo</option>
+                  <option value="CARD">Tarjeta</option>
+                  <option value="TRANSFER">Transferencia</option>
                 </select>
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Description</label>
+              <label className="block text-sm font-medium text-gray-700">Descripción</label>
               <textarea
                 value={paymentForm.description}
                 onChange={(e) => setPaymentForm(prev => ({ ...prev, description: e.target.value }))}
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                 rows={3}
-                placeholder="Payment description or notes..."
+                placeholder="Descripción o notas del pago..."
               />
             </div>
             <div className="flex justify-end space-x-3">
@@ -499,13 +507,13 @@ const PaymentsPage: React.FC = () => {
                 onClick={() => setIsModalOpen(false)}
                 className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
-                Cancel
+                Cancelar
               </button>
               <button
                 type="submit"
                 className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
               >
-                {modalType === 'create' ? 'Process Payment' : 'Update Payment'}
+                {modalType === 'create' ? 'Procesar Pago' : 'Actualizar Pago'}
               </button>
             </div>
           </form>

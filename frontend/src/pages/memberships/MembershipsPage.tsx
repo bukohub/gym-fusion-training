@@ -70,7 +70,7 @@ const MembershipsPage: React.FC = () => {
         totalPages: response.data.pagination?.totalPages || 0,
       }));
     } catch (error) {
-      toast.error('Failed to load membership plans');
+      toast.error('Error al cargar los planes de membresía');
       setPlans([]);
       setPagination(prev => ({
         ...prev,
@@ -93,7 +93,7 @@ const MembershipsPage: React.FC = () => {
         totalPages: response.data.pagination?.totalPages || 0,
       }));
     } catch (error) {
-      toast.error('Failed to load memberships');
+      toast.error('Error al cargar las membresías');
       setMemberships([]);
       setPagination(prev => ({
         ...prev,
@@ -110,7 +110,7 @@ const MembershipsPage: React.FC = () => {
       const response = await usersApi.getAll(1, 100, 'CLIENT');
       setUsers((response.data as any).users || (response.data as any).data || []);
     } catch (error) {
-      toast.error('Failed to load users');
+      toast.error('Error al cargar los usuarios');
       setUsers([]);
     }
   };
@@ -120,12 +120,12 @@ const MembershipsPage: React.FC = () => {
     e.preventDefault();
     try {
       await membershipPlansApi.create(planForm);
-      toast.success('Membership plan created successfully');
+      toast.success('Plan de membresía creado exitosamente');
       setIsModalOpen(false);
       loadPlans();
       resetPlanForm();
     } catch (error) {
-      toast.error('Failed to create membership plan');
+      toast.error('Error al crear el plan de membresía');
     }
   };
 
@@ -134,23 +134,23 @@ const MembershipsPage: React.FC = () => {
     if (!selectedItem) return;
     try {
       await membershipPlansApi.update(selectedItem.id, planForm);
-      toast.success('Membership plan updated successfully');
+      toast.success('Plan de membresía actualizado exitosamente');
       setIsModalOpen(false);
       loadPlans();
       resetPlanForm();
     } catch (error) {
-      toast.error('Failed to update membership plan');
+      toast.error('Error al actualizar el plan de membresía');
     }
   };
 
   const handleDeletePlan = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this membership plan?')) {
+    if (window.confirm('¿Está seguro que desea eliminar este plan de membresía?')) {
       try {
         await membershipPlansApi.delete(id);
-        toast.success('Membership plan deleted successfully');
+        toast.success('Plan de membresía eliminado exitosamente');
         loadPlans();
       } catch (error) {
-        toast.error('Failed to delete membership plan');
+        toast.error('Error al eliminar el plan de membresía');
       }
     }
   };
@@ -160,32 +160,32 @@ const MembershipsPage: React.FC = () => {
     e.preventDefault();
     try {
       await membershipsApi.create(membershipForm);
-      toast.success('Membership created successfully');
+      toast.success('Membresía creada exitosamente');
       setIsModalOpen(false);
       loadMemberships();
       resetMembershipForm();
     } catch (error) {
-      toast.error('Failed to create membership');
+      toast.error('Error al crear la membresía');
     }
   };
 
   const handleSuspendMembership = async (id: string) => {
     try {
       await membershipsApi.suspend(id);
-      toast.success('Membership suspended successfully');
+      toast.success('Membresía suspendida exitosamente');
       loadMemberships();
     } catch (error) {
-      toast.error('Failed to suspend membership');
+      toast.error('Error al suspender la membresía');
     }
   };
 
   const handleReactivateMembership = async (id: string) => {
     try {
       await membershipsApi.reactivate(id);
-      toast.success('Membership reactivated successfully');
+      toast.success('Membresía reactivada exitosamente');
       loadMemberships();
     } catch (error) {
-      toast.error('Failed to reactivate membership');
+      toast.error('Error al reactivar la membresía');
     }
   };
 
@@ -329,7 +329,7 @@ const MembershipsPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">Memberships</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Membresías</h1>
         <button
           onClick={() => openCreateModal(activeTab)}
           className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium"
@@ -466,7 +466,7 @@ const MembershipsPage: React.FC = () => {
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                 required
               >
-                <option value="">Select a member</option>
+                <option value="">Seleccionar miembro</option>
                 {users.map(user => (
                   <option key={user.id} value={user.id}>
                     {user.firstName} {user.lastName} ({user.email})
@@ -482,7 +482,7 @@ const MembershipsPage: React.FC = () => {
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                 required
               >
-                <option value="">Select a plan</option>
+                <option value="">Seleccionar plan</option>
                 {plans.filter(plan => plan.isActive).map(plan => (
                   <option key={plan.id} value={plan.id}>
                     {plan.name} - ${plan.price} ({plan.duration} days)
@@ -491,7 +491,7 @@ const MembershipsPage: React.FC = () => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Start Date</label>
+              <label className="block text-sm font-medium text-gray-700">Fecha de Inicio</label>
               <input
                 type="date"
                 value={membershipForm.startDate}
