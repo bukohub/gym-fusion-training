@@ -7,17 +7,17 @@ export declare class ClassesController {
     constructor(classesService: ClassesService);
     create(createClassDto: CreateClassDto): Promise<{
         trainer: {
-            id: string;
             email: string;
             firstName: string;
             lastName: string;
+            id: string;
         };
         bookings: ({
             user: {
-                id: string;
-                cedula: string;
                 firstName: string;
                 lastName: string;
+                cedula: string;
+                id: string;
             };
         } & {
             id: string;
@@ -29,33 +29,33 @@ export declare class ClassesController {
             attended: boolean;
         })[];
     } & {
+        name: string;
+        description: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        name: string;
-        description: string | null;
         status: string;
+        trainerId: string;
         startTime: Date;
         endTime: Date;
         maxCapacity: number;
-        trainerId: string;
     }>;
     findAll(page?: number, limit?: number, status?: string, trainerId?: string, startDate?: string, endDate?: string): Promise<{
         classes: {
             currentCapacity: number;
             availableSpots: number;
             trainer: {
-                id: string;
                 email: string;
                 firstName: string;
                 lastName: string;
+                id: string;
             };
             bookings: ({
                 user: {
-                    id: string;
-                    cedula: string;
                     firstName: string;
                     lastName: string;
+                    cedula: string;
+                    id: string;
                 };
             } & {
                 id: string;
@@ -66,16 +66,16 @@ export declare class ClassesController {
                 bookedAt: Date;
                 attended: boolean;
             })[];
+            name: string;
+            description: string | null;
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            name: string;
-            description: string | null;
             status: string;
+            trainerId: string;
             startTime: Date;
             endTime: Date;
             maxCapacity: number;
-            trainerId: string;
         }[];
         pagination: {
             total: number;
@@ -94,16 +94,16 @@ export declare class ClassesController {
     }>;
     getUpcoming(limit?: number): Promise<({
         trainer: {
-            id: string;
             firstName: string;
             lastName: string;
+            id: string;
         };
         bookings: ({
             user: {
-                id: string;
-                cedula: string;
                 firstName: string;
                 lastName: string;
+                cedula: string;
+                id: string;
             };
         } & {
             id: string;
@@ -115,36 +115,36 @@ export declare class ClassesController {
             attended: boolean;
         })[];
     } & {
+        name: string;
+        description: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        name: string;
-        description: string | null;
         status: string;
+        trainerId: string;
         startTime: Date;
         endTime: Date;
         maxCapacity: number;
-        trainerId: string;
     })[]>;
     getUserBookings(userId: string, page?: number, limit?: number): Promise<{
         bookings: ({
             class: {
                 trainer: {
-                    id: string;
                     firstName: string;
                     lastName: string;
+                    id: string;
                 };
             } & {
+                name: string;
+                description: string | null;
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                name: string;
-                description: string | null;
                 status: string;
+                trainerId: string;
                 startTime: Date;
                 endTime: Date;
                 maxCapacity: number;
-                trainerId: string;
             };
         } & {
             id: string;
@@ -166,20 +166,20 @@ export declare class ClassesController {
         currentCapacity: number;
         availableSpots: number;
         trainer: {
-            id: string;
             email: string;
             firstName: string;
             lastName: string;
             phone: string;
+            id: string;
         };
         bookings: ({
             user: {
-                id: string;
                 email: string;
-                cedula: string;
                 firstName: string;
                 lastName: string;
+                cedula: string;
                 phone: string;
+                id: string;
             };
         } & {
             id: string;
@@ -190,30 +190,30 @@ export declare class ClassesController {
             bookedAt: Date;
             attended: boolean;
         })[];
+        name: string;
+        description: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        name: string;
-        description: string | null;
         status: string;
+        trainerId: string;
         startTime: Date;
         endTime: Date;
         maxCapacity: number;
-        trainerId: string;
     }>;
     update(id: string, updateClassDto: UpdateClassDto): Promise<{
         trainer: {
-            id: string;
             email: string;
             firstName: string;
             lastName: string;
+            id: string;
         };
         bookings: ({
             user: {
-                id: string;
-                cedula: string;
                 firstName: string;
                 lastName: string;
+                cedula: string;
+                id: string;
             };
         } & {
             id: string;
@@ -225,45 +225,45 @@ export declare class ClassesController {
             attended: boolean;
         })[];
     } & {
+        name: string;
+        description: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        name: string;
-        description: string | null;
         status: string;
+        trainerId: string;
         startTime: Date;
         endTime: Date;
         maxCapacity: number;
-        trainerId: string;
     }>;
     remove(id: string): Promise<{
         message: string;
     }>;
     bookClass(bookClassDto: BookClassDto): Promise<{
         user: {
-            id: string;
             email: string;
-            cedula: string;
             firstName: string;
             lastName: string;
+            cedula: string;
+            id: string;
         };
         class: {
             trainer: {
-                id: string;
                 firstName: string;
                 lastName: string;
+                id: string;
             };
         } & {
+            name: string;
+            description: string | null;
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            name: string;
-            description: string | null;
             status: string;
+            trainerId: string;
             startTime: Date;
             endTime: Date;
             maxCapacity: number;
-            trainerId: string;
         };
     } & {
         id: string;
@@ -279,22 +279,22 @@ export declare class ClassesController {
     }>;
     markAttendance(bookingId: string, attended: boolean): Promise<{
         user: {
-            id: string;
-            cedula: string;
             firstName: string;
             lastName: string;
+            cedula: string;
+            id: string;
         };
         class: {
+            name: string;
+            description: string | null;
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            name: string;
-            description: string | null;
             status: string;
+            trainerId: string;
             startTime: Date;
             endTime: Date;
             maxCapacity: number;
-            trainerId: string;
         };
     } & {
         id: string;

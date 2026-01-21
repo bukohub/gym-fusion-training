@@ -6,12 +6,12 @@ export declare class ProductsService {
     private prisma;
     constructor(prisma: PrismaService);
     create(createProductDto: CreateProductDto): Promise<{
-        id: string;
-        isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
         name: string;
         description: string | null;
+        isActive: boolean;
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
         price: number;
         stock: number;
         minStock: number;
@@ -26,16 +26,16 @@ export declare class ProductsService {
                 createdAt: Date;
                 productId: string;
                 quantity: number;
+                soldBy: string;
                 unitPrice: number;
                 totalPrice: number;
-                soldBy: string;
             }[];
-            id: string;
-            isActive: boolean;
-            createdAt: Date;
-            updatedAt: Date;
             name: string;
             description: string | null;
+            isActive: boolean;
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
             price: number;
             stock: number;
             minStock: number;
@@ -57,28 +57,28 @@ export declare class ProductsService {
             createdAt: Date;
             productId: string;
             quantity: number;
+            soldBy: string;
             unitPrice: number;
             totalPrice: number;
-            soldBy: string;
         }[];
-        id: string;
-        isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
         name: string;
         description: string | null;
+        isActive: boolean;
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
         price: number;
         stock: number;
         minStock: number;
         category: string;
     }>;
     update(id: string, updateProductDto: UpdateProductDto): Promise<{
-        id: string;
-        isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
         name: string;
         description: string | null;
+        isActive: boolean;
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
         price: number;
         stock: number;
         minStock: number;
@@ -88,24 +88,24 @@ export declare class ProductsService {
         message: string;
     }>;
     updateStock(id: string, quantity: number, operation?: 'add' | 'subtract'): Promise<{
-        id: string;
-        isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
         name: string;
         description: string | null;
+        isActive: boolean;
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
         price: number;
         stock: number;
         minStock: number;
         category: string;
     }>;
     getLowStockProducts(): Promise<{
-        id: string;
-        isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
         name: string;
         description: string | null;
+        isActive: boolean;
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
         price: number;
         stock: number;
         minStock: number;
@@ -117,12 +117,12 @@ export declare class ProductsService {
     }[]>;
     createSale(createSaleDto: CreateSaleDto): Promise<{
         product: {
-            id: string;
-            isActive: boolean;
-            createdAt: Date;
-            updatedAt: Date;
             name: string;
             description: string | null;
+            isActive: boolean;
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
             price: number;
             stock: number;
             minStock: number;
@@ -133,19 +133,19 @@ export declare class ProductsService {
         createdAt: Date;
         productId: string;
         quantity: number;
+        soldBy: string;
         unitPrice: number;
         totalPrice: number;
-        soldBy: string;
     }>;
     findAllSales(page?: number, limit?: number, productId?: string, soldBy?: string, startDate?: string, endDate?: string): Promise<{
         sales: ({
             product: {
-                id: string;
-                isActive: boolean;
-                createdAt: Date;
-                updatedAt: Date;
                 name: string;
                 description: string | null;
+                isActive: boolean;
+                id: string;
+                createdAt: Date;
+                updatedAt: Date;
                 price: number;
                 stock: number;
                 minStock: number;
@@ -156,9 +156,9 @@ export declare class ProductsService {
             createdAt: Date;
             productId: string;
             quantity: number;
+            soldBy: string;
             unitPrice: number;
             totalPrice: number;
-            soldBy: string;
         })[];
         pagination: {
             total: number;
@@ -169,12 +169,12 @@ export declare class ProductsService {
     }>;
     findOneSale(id: string): Promise<{
         product: {
-            id: string;
-            isActive: boolean;
-            createdAt: Date;
-            updatedAt: Date;
             name: string;
             description: string | null;
+            isActive: boolean;
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
             price: number;
             stock: number;
             minStock: number;
@@ -185,9 +185,9 @@ export declare class ProductsService {
         createdAt: Date;
         productId: string;
         quantity: number;
+        soldBy: string;
         unitPrice: number;
         totalPrice: number;
-        soldBy: string;
     }>;
     getProductStats(): Promise<{
         totalProducts: number;
@@ -200,8 +200,8 @@ export declare class ProductsService {
         topSellingProducts: {
             totalSold: number;
             salesCount: number;
-            id: string;
             name: string;
+            id: string;
             price: number;
         }[];
     }>;

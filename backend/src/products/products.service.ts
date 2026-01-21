@@ -96,7 +96,7 @@ export class ProductsService {
     }
 
     const totalSales = product.sales.reduce((sum, sale) => sum + sale.quantity, 0);
-    const totalRevenue = product.sales.reduce((sum, sale) => sum + sale.totalPrice, 0);
+    const totalRevenue = product.sales.reduce((sum, sale) => sum + Number(sale.totalPrice), 0);
 
     return {
       ...product,
@@ -203,7 +203,7 @@ export class ProductsService {
       throw new BadRequestException('Insufficient stock');
     }
 
-    const unitPrice = product.price;
+    const unitPrice = Number(product.price);
     const totalPrice = unitPrice * quantity;
 
     // Create sale and update stock in a transaction

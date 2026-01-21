@@ -52,14 +52,20 @@ const ValidationLogsPage: React.FC = () => {
         filters.endDate || undefined,
         filters.userId || undefined
       );
-      setLogs(response.data.logs);
+      setLogs((response.data as any).logs || (response.data as any).data || []);
       setPagination(prev => ({
         ...prev,
-        total: response.data.pagination.total,
-        totalPages: response.data.pagination.totalPages,
+        total: response.data.pagination?.total || 0,
+        totalPages: response.data.pagination?.totalPages || 0,
       }));
     } catch (error) {
       toast.error('Error al cargar los registros de validación');
+      setLogs([]);
+      setPagination(prev => ({
+        ...prev,
+        total: 0,
+        totalPages: 0,
+      }));
     } finally {
       setLoading(false);
     }
@@ -109,7 +115,7 @@ const ValidationLogsPage: React.FC = () => {
     {
       key: 'user',
       label: 'Usuario',
-      render: (user, item) => (
+      render: (user) => (
         <div className="flex items-center">
           {user?.photo ? (
             <img

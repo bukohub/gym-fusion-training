@@ -6,12 +6,12 @@ export declare class ProductsController {
     private readonly productsService;
     constructor(productsService: ProductsService);
     create(createProductDto: CreateProductDto): Promise<{
-        id: string;
-        isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
         name: string;
         description: string | null;
+        isActive: boolean;
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
         price: number;
         stock: number;
         minStock: number;
@@ -26,16 +26,16 @@ export declare class ProductsController {
                 createdAt: Date;
                 productId: string;
                 quantity: number;
+                soldBy: string;
                 unitPrice: number;
                 totalPrice: number;
-                soldBy: string;
             }[];
-            id: string;
-            isActive: boolean;
-            createdAt: Date;
-            updatedAt: Date;
             name: string;
             description: string | null;
+            isActive: boolean;
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
             price: number;
             stock: number;
             minStock: number;
@@ -59,8 +59,8 @@ export declare class ProductsController {
         topSellingProducts: {
             totalSold: number;
             salesCount: number;
-            id: string;
             name: string;
+            id: string;
             price: number;
         }[];
     }>;
@@ -69,12 +69,12 @@ export declare class ProductsController {
         count: number;
     }[]>;
     getLowStock(): Promise<{
-        id: string;
-        isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
         name: string;
         description: string | null;
+        isActive: boolean;
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
         price: number;
         stock: number;
         minStock: number;
@@ -89,28 +89,28 @@ export declare class ProductsController {
             createdAt: Date;
             productId: string;
             quantity: number;
+            soldBy: string;
             unitPrice: number;
             totalPrice: number;
-            soldBy: string;
         }[];
-        id: string;
-        isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
         name: string;
         description: string | null;
+        isActive: boolean;
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
         price: number;
         stock: number;
         minStock: number;
         category: string;
     }>;
     update(id: string, updateProductDto: UpdateProductDto): Promise<{
-        id: string;
-        isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
         name: string;
         description: string | null;
+        isActive: boolean;
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
         price: number;
         stock: number;
         minStock: number;
@@ -120,12 +120,12 @@ export declare class ProductsController {
         message: string;
     }>;
     updateStock(id: string, quantity: number, operation?: 'add' | 'subtract'): Promise<{
-        id: string;
-        isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
         name: string;
         description: string | null;
+        isActive: boolean;
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
         price: number;
         stock: number;
         minStock: number;
@@ -133,12 +133,12 @@ export declare class ProductsController {
     }>;
     createSale(createSaleDto: CreateSaleDto): Promise<{
         product: {
-            id: string;
-            isActive: boolean;
-            createdAt: Date;
-            updatedAt: Date;
             name: string;
             description: string | null;
+            isActive: boolean;
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
             price: number;
             stock: number;
             minStock: number;
@@ -149,19 +149,19 @@ export declare class ProductsController {
         createdAt: Date;
         productId: string;
         quantity: number;
+        soldBy: string;
         unitPrice: number;
         totalPrice: number;
-        soldBy: string;
     }>;
     findAllSales(page?: number, limit?: number, productId?: string, soldBy?: string, startDate?: string, endDate?: string): Promise<{
         sales: ({
             product: {
-                id: string;
-                isActive: boolean;
-                createdAt: Date;
-                updatedAt: Date;
                 name: string;
                 description: string | null;
+                isActive: boolean;
+                id: string;
+                createdAt: Date;
+                updatedAt: Date;
                 price: number;
                 stock: number;
                 minStock: number;
@@ -172,9 +172,9 @@ export declare class ProductsController {
             createdAt: Date;
             productId: string;
             quantity: number;
+            soldBy: string;
             unitPrice: number;
             totalPrice: number;
-            soldBy: string;
         })[];
         pagination: {
             total: number;
@@ -186,12 +186,12 @@ export declare class ProductsController {
     getSalesReport(year: number, month?: number): Promise<unknown[]>;
     findOneSale(id: string): Promise<{
         product: {
-            id: string;
-            isActive: boolean;
-            createdAt: Date;
-            updatedAt: Date;
             name: string;
             description: string | null;
+            isActive: boolean;
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
             price: number;
             stock: number;
             minStock: number;
@@ -202,8 +202,8 @@ export declare class ProductsController {
         createdAt: Date;
         productId: string;
         quantity: number;
+        soldBy: string;
         unitPrice: number;
         totalPrice: number;
-        soldBy: string;
     }>;
 }

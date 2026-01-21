@@ -25,18 +25,18 @@ export declare class ReportsController {
         payments: ({
             user: {
                 email: string;
-                cedula: string;
                 firstName: string;
                 lastName: string;
+                cedula: string;
             };
             membership: {
                 plan: {
-                    id: string;
-                    isActive: boolean;
-                    createdAt: Date;
-                    updatedAt: Date;
                     name: string;
                     description: string | null;
+                    isActive: boolean;
+                    id: string;
+                    createdAt: Date;
+                    updatedAt: Date;
                     duration: number;
                     price: number;
                 };
@@ -44,23 +44,23 @@ export declare class ReportsController {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
+                userId: string;
+                planId: string;
                 startDate: Date;
                 endDate: Date;
                 status: string;
-                userId: string;
-                planId: string;
             };
         } & {
+            description: string | null;
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            description: string | null;
-            status: string;
             userId: string;
+            status: string;
+            membershipId: string | null;
             amount: number;
             method: string;
             transactionId: string | null;
-            membershipId: string | null;
         })[];
     }>;
     getMembershipReport(): Promise<{
@@ -69,29 +69,29 @@ export declare class ReportsController {
         membershipsByPlan: Record<string, number>;
         expiringThisMonth: number;
         plans: {
-            id: string;
-            isActive: boolean;
-            createdAt: Date;
-            updatedAt: Date;
             name: string;
             description: string | null;
+            isActive: boolean;
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
             duration: number;
             price: number;
         }[];
         memberships: ({
             user: {
                 email: string;
-                cedula: string;
                 firstName: string;
                 lastName: string;
+                cedula: string;
             };
             plan: {
-                id: string;
-                isActive: boolean;
-                createdAt: Date;
-                updatedAt: Date;
                 name: string;
                 description: string | null;
+                isActive: boolean;
+                id: string;
+                createdAt: Date;
+                updatedAt: Date;
                 duration: number;
                 price: number;
             };
@@ -99,11 +99,11 @@ export declare class ReportsController {
             id: string;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
+            planId: string;
             startDate: Date;
             endDate: Date;
             status: string;
-            userId: string;
-            planId: string;
         })[];
     }>;
     getClassReport(startDate?: string, endDate?: string): Promise<{
@@ -126,9 +126,9 @@ export declare class ReportsController {
             };
             bookings: ({
                 user: {
-                    cedula: string;
                     firstName: string;
                     lastName: string;
+                    cedula: string;
                 };
             } & {
                 id: string;
@@ -139,16 +139,16 @@ export declare class ReportsController {
                 bookedAt: Date;
                 attended: boolean;
             })[];
+            name: string;
+            description: string | null;
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            name: string;
-            description: string | null;
             status: string;
+            trainerId: string;
             startTime: Date;
             endTime: Date;
             maxCapacity: number;
-            trainerId: string;
         }[];
     }>;
     getUserReport(): Promise<{

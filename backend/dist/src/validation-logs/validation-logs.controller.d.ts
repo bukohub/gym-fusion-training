@@ -5,11 +5,11 @@ export declare class ValidationLogsController {
     findAll(page?: number, limit?: number, validationType?: string, success?: boolean, startDate?: string, endDate?: string, userId?: string): Promise<{
         logs: ({
             user: {
-                id: string;
                 firstName: string;
                 lastName: string;
                 cedula: string;
                 photo: string;
+                id: string;
             };
         } & {
             id: string;
@@ -44,11 +44,11 @@ export declare class ValidationLogsController {
     }>;
     getRecentActivity(limit?: number): Promise<({
         user: {
-            id: string;
             firstName: string;
             lastName: string;
             cedula: string;
             photo: string;
+            id: string;
         };
     } & {
         id: string;

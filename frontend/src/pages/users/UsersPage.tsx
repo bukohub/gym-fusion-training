@@ -76,14 +76,20 @@ const UsersPage: React.FC = () => {
         filters.isActive === '' ? undefined : filters.isActive === 'true',
         debouncedSearch || undefined
       );
-      setUsers(response.data.users);
+      setUsers(response.data.users || []);
       setPagination(prev => ({
         ...prev,
-        total: response.data.pagination.total,
-        totalPages: response.data.pagination.totalPages,
+        total: response.data.pagination?.total || 0,
+        totalPages: response.data.pagination?.totalPages || 0,
       }));
     } catch (error) {
       toast.error('Error al cargar usuarios');
+      setUsers([]);
+      setPagination(prev => ({
+        ...prev,
+        total: 0,
+        totalPages: 0,
+      }));
     } finally {
       setLoading(false);
     }
@@ -98,10 +104,10 @@ const UsersPage: React.FC = () => {
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // For clients, don't send password if it's empty
+      // For clients, set empty password if not provided
       const userData = { ...userForm };
       if (userData.role === 'CLIENT' && !userData.password) {
-        delete userData.password;
+        userData.password = '';
       }
       
       await usersApi.create(userData);

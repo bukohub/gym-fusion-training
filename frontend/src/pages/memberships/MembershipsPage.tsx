@@ -63,14 +63,20 @@ const MembershipsPage: React.FC = () => {
     try {
       setLoading(true);
       const response = await membershipPlansApi.getAll(pagination.page, pagination.limit);
-      setPlans(response.data.plans);
+      setPlans((response.data as any).plans || (response.data as any).data || []);
       setPagination(prev => ({
         ...prev,
-        total: response.data.pagination.total,
-        totalPages: response.data.pagination.totalPages,
+        total: response.data.pagination?.total || 0,
+        totalPages: response.data.pagination?.totalPages || 0,
       }));
     } catch (error) {
       toast.error('Failed to load membership plans');
+      setPlans([]);
+      setPagination(prev => ({
+        ...prev,
+        total: 0,
+        totalPages: 0,
+      }));
     } finally {
       setLoading(false);
     }
@@ -80,14 +86,20 @@ const MembershipsPage: React.FC = () => {
     try {
       setLoading(true);
       const response = await membershipsApi.getAll(pagination.page, pagination.limit);
-      setMemberships(response.data.memberships);
+      setMemberships((response.data as any).memberships || (response.data as any).data || []);
       setPagination(prev => ({
         ...prev,
-        total: response.data.pagination.total,
-        totalPages: response.data.pagination.totalPages,
+        total: response.data.pagination?.total || 0,
+        totalPages: response.data.pagination?.totalPages || 0,
       }));
     } catch (error) {
       toast.error('Failed to load memberships');
+      setMemberships([]);
+      setPagination(prev => ({
+        ...prev,
+        total: 0,
+        totalPages: 0,
+      }));
     } finally {
       setLoading(false);
     }
@@ -96,9 +108,10 @@ const MembershipsPage: React.FC = () => {
   const loadUsers = async () => {
     try {
       const response = await usersApi.getAll(1, 100, 'CLIENT');
-      setUsers(response.data.users);
+      setUsers((response.data as any).users || (response.data as any).data || []);
     } catch (error) {
       toast.error('Failed to load users');
+      setUsers([]);
     }
   };
 

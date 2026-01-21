@@ -57,14 +57,20 @@ const ClassesPage: React.FC = () => {
     try {
       setLoading(true);
       const response = await classesApi.getAll(pagination.page, pagination.limit);
-      setClasses(response.data.data);
+      setClasses(response.data.data || []);
       setPagination(prev => ({
         ...prev,
-        total: response.data.pagination.total,
-        totalPages: response.data.pagination.totalPages,
+        total: response.data.pagination?.total || 0,
+        totalPages: response.data.pagination?.totalPages || 0,
       }));
     } catch (error) {
       toast.error('Failed to load classes');
+      setClasses([]);
+      setPagination(prev => ({
+        ...prev,
+        total: 0,
+        totalPages: 0,
+      }));
     } finally {
       setLoading(false);
     }

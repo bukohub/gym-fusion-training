@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { CameraIcon, PhotoIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import { toast } from 'react-hot-toast';
 import SimpleCameraCapture from './SimpleCameraCapture';
-import { uploadsApi } from '../../services/uploads';
 
 interface PhotoCaptureProps {
   currentPhoto?: string;

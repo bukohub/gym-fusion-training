@@ -6,20 +6,20 @@ export declare class PaymentsController {
     constructor(paymentsService: PaymentsService);
     create(createPaymentDto: CreatePaymentDto): Promise<{
         user: {
-            id: string;
             email: string;
-            cedula: string;
             firstName: string;
             lastName: string;
+            cedula: string;
+            id: string;
         };
         membership: {
             plan: {
-                id: string;
-                isActive: boolean;
-                createdAt: Date;
-                updatedAt: Date;
                 name: string;
                 description: string | null;
+                isActive: boolean;
+                id: string;
+                createdAt: Date;
+                updatedAt: Date;
                 duration: number;
                 price: number;
             };
@@ -27,40 +27,40 @@ export declare class PaymentsController {
             id: string;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
+            planId: string;
             startDate: Date;
             endDate: Date;
             status: string;
-            userId: string;
-            planId: string;
         };
     } & {
+        description: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        description: string | null;
-        status: string;
         userId: string;
+        status: string;
+        membershipId: string | null;
         amount: number;
         method: string;
         transactionId: string | null;
-        membershipId: string | null;
     }>;
     findAll(page?: number, limit?: number, status?: string, method?: string, userId?: string, startDate?: string, endDate?: string): Promise<{
         payments: ({
             user: {
-                id: string;
                 email: string;
                 firstName: string;
                 lastName: string;
+                id: string;
             };
             membership: {
                 plan: {
-                    id: string;
-                    isActive: boolean;
-                    createdAt: Date;
-                    updatedAt: Date;
                     name: string;
                     description: string | null;
+                    isActive: boolean;
+                    id: string;
+                    createdAt: Date;
+                    updatedAt: Date;
                     duration: number;
                     price: number;
                 };
@@ -68,23 +68,23 @@ export declare class PaymentsController {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
+                userId: string;
+                planId: string;
                 startDate: Date;
                 endDate: Date;
                 status: string;
-                userId: string;
-                planId: string;
             };
         } & {
+            description: string | null;
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            description: string | null;
-            status: string;
             userId: string;
+            status: string;
+            membershipId: string | null;
             amount: number;
             method: string;
             transactionId: string | null;
-            membershipId: string | null;
         })[];
         pagination: {
             total: number;
@@ -108,21 +108,21 @@ export declare class PaymentsController {
     }[]>;
     findOne(id: string): Promise<{
         user: {
-            id: string;
             email: string;
-            cedula: string;
             firstName: string;
             lastName: string;
+            cedula: string;
             phone: string;
+            id: string;
         };
         membership: {
             plan: {
-                id: string;
-                isActive: boolean;
-                createdAt: Date;
-                updatedAt: Date;
                 name: string;
                 description: string | null;
+                isActive: boolean;
+                id: string;
+                createdAt: Date;
+                updatedAt: Date;
                 duration: number;
                 price: number;
             };
@@ -130,11 +130,11 @@ export declare class PaymentsController {
             id: string;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
+            planId: string;
             startDate: Date;
             endDate: Date;
             status: string;
-            userId: string;
-            planId: string;
         };
         invoice: {
             id: string;
@@ -146,33 +146,33 @@ export declare class PaymentsController {
             pdfPath: string | null;
         };
     } & {
+        description: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        description: string | null;
-        status: string;
         userId: string;
+        status: string;
+        membershipId: string | null;
         amount: number;
         method: string;
         transactionId: string | null;
-        membershipId: string | null;
     }>;
     update(id: string, updatePaymentDto: UpdatePaymentDto): Promise<{
         user: {
-            id: string;
             email: string;
-            cedula: string;
             firstName: string;
             lastName: string;
+            cedula: string;
+            id: string;
         };
         membership: {
             plan: {
-                id: string;
-                isActive: boolean;
-                createdAt: Date;
-                updatedAt: Date;
                 name: string;
                 description: string | null;
+                isActive: boolean;
+                id: string;
+                createdAt: Date;
+                updatedAt: Date;
                 duration: number;
                 price: number;
             };
@@ -180,43 +180,43 @@ export declare class PaymentsController {
             id: string;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
+            planId: string;
             startDate: Date;
             endDate: Date;
             status: string;
-            userId: string;
-            planId: string;
         };
     } & {
+        description: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        description: string | null;
-        status: string;
         userId: string;
+        status: string;
+        membershipId: string | null;
         amount: number;
         method: string;
         transactionId: string | null;
-        membershipId: string | null;
     }>;
     remove(id: string): Promise<{
         message: string;
     }>;
     processPayment(id: string): Promise<{
         user: {
-            id: string;
             email: string;
-            cedula: string;
             firstName: string;
             lastName: string;
+            cedula: string;
+            id: string;
         };
         membership: {
             plan: {
-                id: string;
-                isActive: boolean;
-                createdAt: Date;
-                updatedAt: Date;
                 name: string;
                 description: string | null;
+                isActive: boolean;
+                id: string;
+                createdAt: Date;
+                updatedAt: Date;
                 duration: number;
                 price: number;
             };
@@ -224,40 +224,40 @@ export declare class PaymentsController {
             id: string;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
+            planId: string;
             startDate: Date;
             endDate: Date;
             status: string;
-            userId: string;
-            planId: string;
         };
     } & {
+        description: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        description: string | null;
-        status: string;
         userId: string;
+        status: string;
+        membershipId: string | null;
         amount: number;
         method: string;
         transactionId: string | null;
-        membershipId: string | null;
     }>;
     refundPayment(id: string): Promise<{
         user: {
-            id: string;
             email: string;
-            cedula: string;
             firstName: string;
             lastName: string;
+            cedula: string;
+            id: string;
         };
         membership: {
             plan: {
-                id: string;
-                isActive: boolean;
-                createdAt: Date;
-                updatedAt: Date;
                 name: string;
                 description: string | null;
+                isActive: boolean;
+                id: string;
+                createdAt: Date;
+                updatedAt: Date;
                 duration: number;
                 price: number;
             };
@@ -265,40 +265,40 @@ export declare class PaymentsController {
             id: string;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
+            planId: string;
             startDate: Date;
             endDate: Date;
             status: string;
-            userId: string;
-            planId: string;
         };
     } & {
+        description: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        description: string | null;
-        status: string;
         userId: string;
+        status: string;
+        membershipId: string | null;
         amount: number;
         method: string;
         transactionId: string | null;
-        membershipId: string | null;
     }>;
     failPayment(id: string): Promise<{
         user: {
-            id: string;
             email: string;
-            cedula: string;
             firstName: string;
             lastName: string;
+            cedula: string;
+            id: string;
         };
         membership: {
             plan: {
-                id: string;
-                isActive: boolean;
-                createdAt: Date;
-                updatedAt: Date;
                 name: string;
                 description: string | null;
+                isActive: boolean;
+                id: string;
+                createdAt: Date;
+                updatedAt: Date;
                 duration: number;
                 price: number;
             };
@@ -306,22 +306,22 @@ export declare class PaymentsController {
             id: string;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
+            planId: string;
             startDate: Date;
             endDate: Date;
             status: string;
-            userId: string;
-            planId: string;
         };
     } & {
+        description: string | null;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        description: string | null;
-        status: string;
         userId: string;
+        status: string;
+        membershipId: string | null;
         amount: number;
         method: string;
         transactionId: string | null;
-        membershipId: string | null;
     }>;
 }

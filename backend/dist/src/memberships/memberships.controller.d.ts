@@ -6,25 +6,25 @@ export declare class MembershipsController {
     private readonly membershipsService;
     constructor(membershipsService: MembershipsService);
     createPlan(createMembershipPlanDto: CreateMembershipPlanDto): Promise<{
-        id: string;
         name: string;
         description: string | null;
-        duration: number;
-        price: number;
         isActive: boolean;
+        id: string;
         createdAt: Date;
         updatedAt: Date;
+        duration: number;
+        price: number;
     }>;
     findAllPlans(page?: number, limit?: number, isActive?: boolean): Promise<{
         plans: {
-            id: string;
             name: string;
             description: string | null;
-            duration: number;
-            price: number;
             isActive: boolean;
+            id: string;
             createdAt: Date;
             updatedAt: Date;
+            duration: number;
+            price: number;
         }[];
         pagination: {
             total: number;
@@ -36,10 +36,10 @@ export declare class MembershipsController {
     findOnePlan(id: string): Promise<{
         memberships: ({
             user: {
-                id: string;
                 email: string;
                 firstName: string;
                 lastName: string;
+                id: string;
             };
         } & {
             id: string;
@@ -52,44 +52,44 @@ export declare class MembershipsController {
             status: string;
         })[];
     } & {
-        id: string;
         name: string;
         description: string | null;
-        duration: number;
-        price: number;
         isActive: boolean;
+        id: string;
         createdAt: Date;
         updatedAt: Date;
+        duration: number;
+        price: number;
     }>;
     updatePlan(id: string, updateMembershipPlanDto: UpdateMembershipPlanDto): Promise<{
-        id: string;
         name: string;
         description: string | null;
-        duration: number;
-        price: number;
         isActive: boolean;
+        id: string;
         createdAt: Date;
         updatedAt: Date;
+        duration: number;
+        price: number;
     }>;
     removePlan(id: string): Promise<{
         message: string;
     }>;
     create(createMembershipDto: CreateMembershipDto): Promise<{
         user: {
-            id: string;
             email: string;
             firstName: string;
             lastName: string;
+            id: string;
         };
         plan: {
-            id: string;
             name: string;
             description: string | null;
-            duration: number;
-            price: number;
             isActive: boolean;
+            id: string;
             createdAt: Date;
             updatedAt: Date;
+            duration: number;
+            price: number;
         };
     } & {
         id: string;
@@ -104,14 +104,14 @@ export declare class MembershipsController {
     findAll(page?: number, limit?: number, status?: string, userId?: string): Promise<{
         memberships: ({
             user: {
-                id: string;
                 email: string;
                 firstName: string;
                 lastName: string;
+                id: string;
             };
             payments: {
-                id: string;
                 description: string | null;
+                id: string;
                 createdAt: Date;
                 updatedAt: Date;
                 userId: string;
@@ -122,14 +122,14 @@ export declare class MembershipsController {
                 transactionId: string | null;
             }[];
             plan: {
-                id: string;
                 name: string;
                 description: string | null;
-                duration: number;
-                price: number;
                 isActive: boolean;
+                id: string;
                 createdAt: Date;
                 updatedAt: Date;
+                duration: number;
+                price: number;
             };
         } & {
             id: string;
@@ -157,21 +157,21 @@ export declare class MembershipsController {
     }>;
     getExpiring(days?: number): Promise<({
         user: {
-            id: string;
             email: string;
             firstName: string;
             lastName: string;
             phone: string;
+            id: string;
         };
         plan: {
-            id: string;
             name: string;
             description: string | null;
-            duration: number;
-            price: number;
             isActive: boolean;
+            id: string;
             createdAt: Date;
             updatedAt: Date;
+            duration: number;
+            price: number;
         };
     } & {
         id: string;
@@ -185,15 +185,15 @@ export declare class MembershipsController {
     })[]>;
     findOne(id: string): Promise<{
         user: {
-            id: string;
             email: string;
             firstName: string;
             lastName: string;
             phone: string;
+            id: string;
         };
         payments: {
-            id: string;
             description: string | null;
+            id: string;
             createdAt: Date;
             updatedAt: Date;
             userId: string;
@@ -204,14 +204,14 @@ export declare class MembershipsController {
             transactionId: string | null;
         }[];
         plan: {
-            id: string;
             name: string;
             description: string | null;
-            duration: number;
-            price: number;
             isActive: boolean;
+            id: string;
             createdAt: Date;
             updatedAt: Date;
+            duration: number;
+            price: number;
         };
     } & {
         id: string;
@@ -225,20 +225,20 @@ export declare class MembershipsController {
     }>;
     update(id: string, updateData: any): Promise<{
         user: {
-            id: string;
             email: string;
             firstName: string;
             lastName: string;
+            id: string;
         };
         plan: {
-            id: string;
             name: string;
             description: string | null;
-            duration: number;
-            price: number;
             isActive: boolean;
+            id: string;
             createdAt: Date;
             updatedAt: Date;
+            duration: number;
+            price: number;
         };
     } & {
         id: string;
@@ -255,20 +255,20 @@ export declare class MembershipsController {
     }>;
     renew(id: string): Promise<{
         user: {
-            id: string;
             email: string;
             firstName: string;
             lastName: string;
+            id: string;
         };
         plan: {
-            id: string;
             name: string;
             description: string | null;
-            duration: number;
-            price: number;
             isActive: boolean;
+            id: string;
             createdAt: Date;
             updatedAt: Date;
+            duration: number;
+            price: number;
         };
     } & {
         id: string;
@@ -282,20 +282,20 @@ export declare class MembershipsController {
     }>;
     suspend(id: string): Promise<{
         user: {
-            id: string;
             email: string;
             firstName: string;
             lastName: string;
+            id: string;
         };
         plan: {
-            id: string;
             name: string;
             description: string | null;
-            duration: number;
-            price: number;
             isActive: boolean;
+            id: string;
             createdAt: Date;
             updatedAt: Date;
+            duration: number;
+            price: number;
         };
     } & {
         id: string;
@@ -309,20 +309,20 @@ export declare class MembershipsController {
     }>;
     activate(id: string): Promise<{
         user: {
-            id: string;
             email: string;
             firstName: string;
             lastName: string;
+            id: string;
         };
         plan: {
-            id: string;
             name: string;
             description: string | null;
-            duration: number;
-            price: number;
             isActive: boolean;
+            id: string;
             createdAt: Date;
             updatedAt: Date;
+            duration: number;
+            price: number;
         };
     } & {
         id: string;
@@ -345,15 +345,15 @@ export declare class MembershipsController {
             status: string;
             daysRemaining: number;
             user: {
-                id: string;
-                isActive: boolean;
                 email: string;
                 firstName: string;
                 lastName: string;
                 cedula: string;
                 phone: string;
+                isActive: boolean;
                 photo: string;
                 holler: string;
+                id: string;
             };
             plan: {
                 name: string;
@@ -372,15 +372,15 @@ export declare class MembershipsController {
             status: string;
             daysRemaining: number;
             user: {
-                id: string;
-                isActive: boolean;
                 email: string;
                 firstName: string;
                 lastName: string;
                 cedula: string;
                 phone: string;
+                isActive: boolean;
                 photo: string;
                 holler: string;
+                id: string;
             };
             plan: {
                 name: string;
@@ -399,15 +399,15 @@ export declare class MembershipsController {
             status: string;
             daysRemaining: number;
             user: {
-                id: string;
-                isActive: boolean;
                 email: string;
                 firstName: string;
                 lastName: string;
                 cedula: string;
                 phone: string;
+                isActive: boolean;
                 photo: string;
                 holler: string;
+                id: string;
             };
             plan: {
                 name: string;
@@ -436,15 +436,15 @@ export declare class MembershipsController {
             status: string;
             daysRemaining: number;
             user: {
-                id: string;
-                isActive: boolean;
                 email: string;
                 firstName: string;
                 lastName: string;
                 cedula: string;
                 phone: string;
+                isActive: boolean;
                 photo: string;
                 holler: string;
+                id: string;
             };
             plan: {
                 name: string;

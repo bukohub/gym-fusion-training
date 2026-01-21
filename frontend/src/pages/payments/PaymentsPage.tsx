@@ -67,7 +67,7 @@ const PaymentsPage: React.FC = () => {
         filters.startDate || undefined,
         filters.endDate || undefined
       );
-      setPayments(response.data.payments);
+      setPayments(response.data.data);
       setPagination(prev => ({
         ...prev,
         total: response.data.pagination.total,
@@ -83,7 +83,7 @@ const PaymentsPage: React.FC = () => {
   const loadUsers = async () => {
     try {
       const response = await usersApi.getAll(1, 100);
-      setUsers(response.data.users);
+      setUsers(response.data.data);
     } catch (error) {
       toast.error('Failed to load users');
     }
@@ -92,7 +92,7 @@ const PaymentsPage: React.FC = () => {
   const loadMemberships = async () => {
     try {
       const response = await membershipsApi.getAll(1, 100);
-      setMemberships(response.data.memberships);
+      setMemberships(response.data.data);
     } catch (error) {
       toast.error('Failed to load memberships');
     }

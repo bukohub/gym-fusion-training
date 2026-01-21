@@ -14,17 +14,17 @@ export declare class AuthService {
     register(registerDto: RegisterDto): Promise<{
         access_token: string;
         user: {
-            id: string;
             email: string;
-            cedula: string;
             firstName: string;
             lastName: string;
+            cedula: string;
             phone: string;
             role: string;
-            avatar: string;
+            isActive: boolean;
             photo: string;
             holler: string;
-            isActive: boolean;
+            id: string;
+            avatar: string;
             createdAt: Date;
         };
     }>;

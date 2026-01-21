@@ -45,7 +45,7 @@ const Table = <T extends Record<string, any>>({
     );
   }
 
-  if (data.length === 0) {
+  if (!data || data.length === 0) {
     return (
       <div className="bg-white shadow rounded-lg p-6 text-center">
         <p className="text-gray-500">{emptyMessage}</p>

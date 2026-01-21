@@ -96,17 +96,17 @@ export class ReportsService {
       orderBy: { createdAt: 'desc' },
     });
 
-    const totalRevenue = payments.reduce((sum, payment) => sum + payment.amount, 0);
+    const totalRevenue = payments.reduce((sum, payment) => sum + Number(payment.amount), 0);
     const avgPayment = payments.length > 0 ? totalRevenue / payments.length : 0;
 
     const revenueByMethod = payments.reduce((acc, payment) => {
-      acc[payment.method] = (acc[payment.method] || 0) + payment.amount;
+      acc[payment.method] = (acc[payment.method] || 0) + Number(payment.amount);
       return acc;
     }, {} as Record<string, number>);
 
     const dailyRevenue = payments.reduce((acc, payment) => {
       const date = payment.createdAt.toISOString().split('T')[0];
-      acc[date] = (acc[date] || 0) + payment.amount;
+      acc[date] = (acc[date] || 0) + Number(payment.amount);
       return acc;
     }, {} as Record<string, number>);
 
@@ -287,7 +287,7 @@ export class ReportsService {
         id: user.id,
         name: `${user.firstName} ${user.lastName}`,
         email: user.email,
-        totalSpent: user.payments.reduce((sum, payment) => sum + payment.amount, 0),
+        totalSpent: user.payments.reduce((sum, payment) => sum + Number(payment.amount), 0),
         totalClasses: user.bookedClasses.length,
         activeMemberships: user.memberships.filter(m => m.status === 'ACTIVE').length,
       }))
@@ -328,11 +328,11 @@ export class ReportsService {
       monthlyPayments[month] += 1;
     });
 
-    const totalRevenue = payments.reduce((sum, payment) => sum + payment.amount, 0);
+    const totalRevenue = payments.reduce((sum, payment) => sum + Number(payment.amount), 0);
     const avgMonthlyRevenue = totalRevenue / 12;
 
     const revenueByMethod = payments.reduce((acc, payment) => {
-      acc[payment.method] = (acc[payment.method] || 0) + payment.amount;
+      acc[payment.method] = (acc[payment.method] || 0) + Number(payment.amount);
       return acc;
     }, {} as Record<string, number>);
 

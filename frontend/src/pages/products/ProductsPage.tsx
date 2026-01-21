@@ -75,14 +75,20 @@ const ProductsPage: React.FC = () => {
         filters.lowStock || undefined,
         filters.search || undefined
       );
-      setProducts(response.data.data);
+      setProducts((response.data as any).products || (response.data as any).data || []);
       setPagination(prev => ({
         ...prev,
-        total: response.data.pagination.total,
-        totalPages: response.data.pagination.totalPages,
+        total: response.data.pagination?.total || 0,
+        totalPages: response.data.pagination?.totalPages || 0,
       }));
     } catch (error) {
       toast.error('Failed to load products');
+      setProducts([]);
+      setPagination(prev => ({
+        ...prev,
+        total: 0,
+        totalPages: 0,
+      }));
     } finally {
       setLoading(false);
     }
@@ -92,14 +98,20 @@ const ProductsPage: React.FC = () => {
     try {
       setLoading(true);
       const response = await salesApi.getAll(pagination.page, pagination.limit);
-      setSales(response.data.data);
+      setSales((response.data as any).sales || (response.data as any).data || []);
       setPagination(prev => ({
         ...prev,
-        total: response.data.pagination.total,
-        totalPages: response.data.pagination.totalPages,
+        total: response.data.pagination?.total || 0,
+        totalPages: response.data.pagination?.totalPages || 0,
       }));
     } catch (error) {
       toast.error('Failed to load sales');
+      setSales([]);
+      setPagination(prev => ({
+        ...prev,
+        total: 0,
+        totalPages: 0,
+      }));
     } finally {
       setLoading(false);
     }
@@ -108,9 +120,10 @@ const ProductsPage: React.FC = () => {
   const loadUsers = async () => {
     try {
       const response = await usersApi.getAll(1, 100);
-      setUsers(response.data.data);
+      setUsers((response.data as any).users || (response.data as any).data || []);
     } catch (error) {
       toast.error('Failed to load users');
+      setUsers([]);
     }
   };
 

@@ -19,8 +19,14 @@ async function bootstrap() {
 
   // CORS configuration
   app.enableCors({
-    origin: configService.get('CORS_ORIGIN'),
+    origin: [
+      configService.get('CORS_ORIGIN'),
+      'https://frontend-opal-ten-97.vercel.app',
+      'http://localhost:5173', // for local development
+    ].filter(Boolean),
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
   });
 
   // Global prefix

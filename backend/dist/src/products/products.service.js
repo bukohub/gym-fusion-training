@@ -85,7 +85,7 @@ let ProductsService = class ProductsService {
             throw new common_1.NotFoundException('Product not found');
         }
         const totalSales = product.sales.reduce((sum, sale) => sum + sale.quantity, 0);
-        const totalRevenue = product.sales.reduce((sum, sale) => sum + sale.totalPrice, 0);
+        const totalRevenue = product.sales.reduce((sum, sale) => sum + Number(sale.totalPrice), 0);
         return {
             ...product,
             isLowStock: product.stock <= product.minStock,
@@ -168,7 +168,7 @@ let ProductsService = class ProductsService {
         if (product.stock < quantity) {
             throw new common_1.BadRequestException('Insufficient stock');
         }
-        const unitPrice = product.price;
+        const unitPrice = Number(product.price);
         const totalPrice = unitPrice * quantity;
         const result = await this.prisma.$transaction([
             this.prisma.sale.create({

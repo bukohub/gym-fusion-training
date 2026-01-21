@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useAuth } from '../../store/AuthContext';
-import { RegisterData } from '../../types';
+import { RegisterData, Role } from '../../types';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
 const schema = yup.object({
@@ -12,7 +12,11 @@ const schema = yup.object({
   lastName: yup.string().required('Last name is required'),
   email: yup.string().email('Invalid email').required('Email is required'),
   password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
+  cedula: yup.string().required('Cedula is required'),
   phone: yup.string().optional(),
+  role: yup.mixed<Role>().oneOf(Object.values(Role)).optional(),
+  photo: yup.string().optional(),
+  holler: yup.string().optional(),
 });
 
 const RegisterPage: React.FC = () => {
@@ -121,6 +125,21 @@ const RegisterPage: React.FC = () => {
                 className="mt-1 input"
                 placeholder="Phone number"
               />
+            </div>
+
+            <div>
+              <label htmlFor="cedula" className="block text-sm font-medium text-gray-700">
+                Cedula
+              </label>
+              <input
+                {...register('cedula')}
+                type="text"
+                className={`mt-1 input ${errors.cedula ? 'input-error' : ''}`}
+                placeholder="Cedula"
+              />
+              {errors.cedula && (
+                <p className="mt-1 text-sm text-red-600">{errors.cedula.message}</p>
+              )}
             </div>
             
             <div>

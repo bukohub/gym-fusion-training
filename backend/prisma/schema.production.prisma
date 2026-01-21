@@ -1,0 +1,210 @@
+// Production Prisma schema for PostgreSQL deployment
+// This should replace schema.prisma for production deployment
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String      @id @default(uuid())
+  email             String      @unique
+  password          String
+  firstName         String
+  lastName          String
+  cedula            String      @unique
+  phone             String?
+  role              String      @default("CLIENT") // ADMIN, RECEPTIONIST, TRAINER, CLIENT
+  avatar            String?
+  photo             String?     // Photo upload path
+  holler            String?     // Digital holler ID
+  isActive          Boolean     @default(true)
+  emailVerified     Boolean     @default(false)
+  lastLogin         DateTime?
+  resetPasswordToken String?
+  resetPasswordExpires DateTime?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  // Relations
+  memberships       Membership[]
+  payments          Payment[]
+  trainedClasses    Class[]     @relation("TrainerClasses")
+  bookedClasses     ClassBooking[]
+  accessLogs        AccessLog[]
+  validationLogs    ValidationLog[]
+  createdInvoices   Invoice[]   @relation("CreatedBy")
+
+  @@map("users")
+}
+
+model MembershipPlan {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  duration    Int      // Duration in days
+  price       Decimal  // Changed from Float to Decimal for better precision
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  memberships Membership[]
+
+  @@map("membership_plans")
+}
+
+model Membership {
+  id         String   @id @default(uuid())
+  userId     String
+  planId     String
+  startDate  DateTime
+  endDate    DateTime
+  status     String   @default("ACTIVE") // ACTIVE, EXPIRED, SUSPENDED
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan       MembershipPlan   @relation(fields: [planId], references: [id])
+  payments   Payment[]
+
+  @@map("memberships")
+}
+
+model Payment {
+  id           String    @id @default(uuid())
+  userId       String
+  membershipId String?
+  amount       Decimal   // Changed from Float to Decimal for better precision
+  method       String    // CASH, CARD, TRANSFER
+  status       String    @default("PENDING") // PENDING, COMPLETED, FAILED, REFUNDED
+  description  String?
+  transactionId String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // Relations
+  user         User          @relation(fields: [userId], references: [id])
+  membership   Membership?   @relation(fields: [membershipId], references: [id])
+  invoice      Invoice?
+
+  @@map("payments")
+}
+
+model Invoice {
+  id          String   @id @default(uuid())
+  paymentId   String   @unique
+  invoiceNumber String @unique
+  createdById String
+  pdfPath     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  payment     Payment  @relation(fields: [paymentId], references: [id])
+  createdBy   User     @relation("CreatedBy", fields: [createdById], references: [id])
+
+  @@map("invoices")
+}
+
+model Class {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  trainerId   String
+  startTime   DateTime
+  endTime     DateTime
+  maxCapacity Int
+  status      String   @default("SCHEDULED") // SCHEDULED, COMPLETED, CANCELLED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  trainer     User          @relation("TrainerClasses", fields: [trainerId], references: [id])
+  bookings    ClassBooking[]
+
+  @@map("classes")
+}
+
+model ClassBooking {
+  id        String   @id @default(uuid())
+  userId    String
+  classId   String
+  bookedAt  DateTime @default(now())
+  attended  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  class     Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, classId])
+  @@map("class_bookings")
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  price       Decimal  // Changed from Float to Decimal for better precision
+  stock       Int      @default(0)
+  minStock    Int      @default(0)
+  category    String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  sales       Sale[]
+
+  @@map("products")
+}
+
+model Sale {
+  id         String   @id @default(uuid())
+  productId  String
+  quantity   Int
+  unitPrice  Decimal  // Changed from Float to Decimal for better precision
+  totalPrice Decimal  // Changed from Float to Decimal for better precision
+  soldBy     String
+  createdAt  DateTime @default(now())
+
+  // Relations
+  product    Product  @relation(fields: [productId], references: [id])
+
+  @@map("sales")
+}
+
+model AccessLog {
+  id        String   @id @default(uuid())
+  userId    String
+  method    String   // QR, FINGERPRINT, MANUAL
+  timestamp DateTime @default(now())
+  success   Boolean  @default(true)
+
+  // Relations
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("access_logs")
+}
+
+model ValidationLog {
+  id            String   @id @default(uuid())
+  userId        String?  // Nullable in case validation fails and user not found
+  identifier    String   // The cedula or holler used for validation
+  validationType String  // "CEDULA" or "HOLLER"
+  success       Boolean  @default(false)
+  reason        String?  // Reason for failure (expired, not found, inactive, etc.)
+  validatedAt   DateTime @default(now())
+
+  // Relations
+  user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("validation_logs")
+}
