@@ -6,33 +6,33 @@ export declare class UsersService {
     private prisma;
     constructor(prisma: PrismaService);
     create(createUserDto: CreateUserDto): Promise<{
+        id: string;
         email: string;
         firstName: string;
         lastName: string;
         cedula: string;
         phone: string;
         role: string;
-        isActive: boolean;
+        avatar: string;
         photo: string;
         holler: string;
-        id: string;
-        avatar: string;
+        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
     }>;
     findAll(page?: number, limit?: number, role?: Role, isActive?: boolean, search?: string): Promise<{
         users: {
+            id: string;
             email: string;
             firstName: string;
             lastName: string;
             cedula: string;
             phone: string;
             role: string;
-            isActive: boolean;
+            avatar: string;
             photo: string;
             holler: string;
-            id: string;
-            avatar: string;
+            isActive: boolean;
             lastLogin: Date;
             createdAt: Date;
         }[];
@@ -44,29 +44,29 @@ export declare class UsersService {
         };
     }>;
     findOne(id: string): Promise<{
+        id: string;
         email: string;
         firstName: string;
         lastName: string;
         cedula: string;
         phone: string;
         role: string;
-        isActive: boolean;
+        avatar: string;
         photo: string;
         holler: string;
-        id: string;
-        avatar: string;
+        isActive: boolean;
         emailVerified: boolean;
         lastLogin: Date;
         createdAt: Date;
         updatedAt: Date;
         memberships: ({
             plan: {
-                name: string;
-                description: string | null;
-                isActive: boolean;
                 id: string;
+                isActive: boolean;
                 createdAt: Date;
                 updatedAt: Date;
+                name: string;
+                description: string | null;
                 duration: number;
                 price: number;
             };
@@ -81,7 +81,6 @@ export declare class UsersService {
             status: string;
         })[];
         payments: {
-            description: string | null;
             id: string;
             createdAt: Date;
             updatedAt: Date;
@@ -90,6 +89,7 @@ export declare class UsersService {
             membershipId: string | null;
             amount: number;
             method: string;
+            description: string | null;
             transactionId: string | null;
         }[];
         bookedClasses: ({
@@ -99,12 +99,12 @@ export declare class UsersService {
                     lastName: string;
                 };
             } & {
-                name: string;
-                description: string | null;
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
+                name: string;
                 status: string;
+                description: string | null;
                 trainerId: string;
                 startTime: Date;
                 endTime: Date;
@@ -121,17 +121,17 @@ export declare class UsersService {
         })[];
     }>;
     update(id: string, updateUserDto: UpdateUserDto): Promise<{
+        id: string;
         email: string;
         firstName: string;
         lastName: string;
         cedula: string;
         phone: string;
         role: string;
-        isActive: boolean;
+        avatar: string;
         photo: string;
         holler: string;
-        id: string;
-        avatar: string;
+        isActive: boolean;
         emailVerified: boolean;
         updatedAt: Date;
     }>;
@@ -139,24 +139,24 @@ export declare class UsersService {
         message: string;
     }>;
     deactivate(id: string): Promise<{
+        id: string;
         email: string;
         firstName: string;
         lastName: string;
         cedula: string;
-        isActive: boolean;
         photo: string;
         holler: string;
-        id: string;
+        isActive: boolean;
     }>;
     activate(id: string): Promise<{
+        id: string;
         email: string;
         firstName: string;
         lastName: string;
         cedula: string;
-        isActive: boolean;
         photo: string;
         holler: string;
-        id: string;
+        isActive: boolean;
     }>;
     getUserStats(): Promise<{
         totalUsers: number;

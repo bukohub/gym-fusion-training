@@ -24,8 +24,14 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiProperty)({ example: 'password123', minLength: 6, required: false }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.ValidateIf)((object, value) => {
+        if (object.role === roles_1.Role.CLIENT && (!value || value === '')) {
+            return false;
+        }
+        return true;
+    }),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MinLength)(6),
+    (0, class_validator_1.MinLength)(6, { message: 'password must be longer than or equal to 6 characters' }),
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "password", void 0);
 __decorate([
