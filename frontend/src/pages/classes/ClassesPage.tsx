@@ -57,7 +57,7 @@ const ClassesPage: React.FC = () => {
     try {
       setLoading(true);
       const response = await classesApi.getAll(pagination.page, pagination.limit);
-      setClasses(response.data.data || []);
+      setClasses((response.data as any).classes || (response.data as any).data || []);
       setPagination(prev => ({
         ...prev,
         total: response.data.pagination?.total || 0,
