@@ -47,6 +47,8 @@ const UsersPage: React.FC = () => {
     lastName: '',
     cedula: '',
     phone: '',
+    weight: '',
+    height: '',
     role: 'CLIENT' as keyof typeof Role,
     password: '',
     photo: '',
@@ -105,11 +107,15 @@ const UsersPage: React.FC = () => {
     e.preventDefault();
     try {
       // For clients, set empty password if not provided
-      const userData = { ...userForm };
+      const userData = {
+        ...userForm,
+        weight: userForm.weight ? parseFloat(userForm.weight) : undefined,
+        height: userForm.height ? parseFloat(userForm.height) : undefined,
+      };
       if (userData.role === 'CLIENT' && !userData.password) {
         userData.password = '';
       }
-      
+
       await usersApi.create(userData);
       toast.success('Usuario creado exitosamente');
       setIsModalOpen(false);
@@ -124,7 +130,12 @@ const UsersPage: React.FC = () => {
     e.preventDefault();
     if (!selectedUser) return;
     try {
-      const { password, ...updateData } = userForm;
+      const { password, ...userData } = userForm;
+      const updateData = {
+        ...userData,
+        weight: userData.weight ? parseFloat(userData.weight as string) : undefined,
+        height: userData.height ? parseFloat(userData.height as string) : undefined,
+      };
       await usersApi.update(selectedUser.id, updateData);
       toast.success('Usuario actualizado exitosamente');
       setIsModalOpen(false);
@@ -186,6 +197,8 @@ const UsersPage: React.FC = () => {
       lastName: '',
       cedula: '',
       phone: '',
+      weight: '',
+      height: '',
       role: 'CLIENT',
       password: '',
       photo: '',
@@ -205,11 +218,13 @@ const UsersPage: React.FC = () => {
     setModalType('edit');
     setSelectedUser(user);
     setUserForm({
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      cedula: user.cedula,
+      email: user.email || '',
+      firstName: user.firstName || '',
+      lastName: user.lastName || '',
+      cedula: user.cedula || '',
       phone: user.phone || '',
+      weight: user.weight?.toString() || '',
+      height: user.height?.toString() || '',
       role: user.role as keyof typeof Role,
       password: '',
       photo: user.photo || '',
@@ -235,7 +250,7 @@ const UsersPage: React.FC = () => {
           ) : (
             <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
               <span className="text-gray-600 text-xs">
-                {item.firstName.charAt(0)}{item.lastName.charAt(0)}
+                {(item.firstName || '').charAt(0)}{(item.lastName || '').charAt(0)}
               </span>
             </div>
           )}
@@ -245,12 +260,10 @@ const UsersPage: React.FC = () => {
     {
       key: 'firstName',
       label: 'Nombre',
-      render: (_, item) => `${item.firstName} ${item.lastName}`,
+      render: (_, item) => `${item.firstName || ''} ${item.lastName || ''}`.trim() || 'N/A',
       sortable: true,
     },
-    { key: 'cedula', label: 'Cédula', sortable: true },
-    { key: 'holler', label: 'Holler', render: (value) => value || 'N/A' },
-    { key: 'email', label: 'Email', sortable: true },
+    { key: 'cedula', label: 'Cédula', render: (value) => value || 'N/A', sortable: true },
     { key: 'phone', label: 'Teléfono' },
     {
       key: 'role',
@@ -288,15 +301,21 @@ const UsersPage: React.FC = () => {
       sortable: true,
     },
     {
-      key: 'lastLogin',
-      label: 'Último Acceso',
-      render: (value) => value ? new Date(value).toLocaleDateString() : 'Nunca',
-      sortable: true,
-    },
-    {
       key: 'createdAt',
       label: 'Creado',
       render: (value) => new Date(value).toLocaleDateString(),
+      sortable: true,
+    },
+    {
+      key: 'weight',
+      label: 'Peso',
+      render: (value) => value ? `${value} kg` : 'N/A',
+      sortable: true,
+    },
+    {
+      key: 'height',
+      label: 'Altura',
+      render: (value) => value ? `${value} cm` : 'N/A',
       sortable: true,
     },
     {
@@ -429,8 +448,9 @@ const UsersPage: React.FC = () => {
         <form onSubmit={modalType === 'create' ? handleCreateUser : handleUpdateUser} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Nombre</label>
+              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">Nombre *</label>
               <input
+                id="firstName"
                 type="text"
                 value={userForm.firstName}
                 onChange={(e) => setUserForm(prev => ({ ...prev, firstName: e.target.value }))}
@@ -439,8 +459,9 @@ const UsersPage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Apellido</label>
+              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">Apellido *</label>
               <input
+                id="lastName"
                 type="text"
                 value={userForm.lastName}
                 onChange={(e) => setUserForm(prev => ({ ...prev, lastName: e.target.value }))}
@@ -451,8 +472,9 @@ const UsersPage: React.FC = () => {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Cédula</label>
+              <label htmlFor="cedula" className="block text-sm font-medium text-gray-700">Cédula</label>
               <input
+                id="cedula"
                 type="text"
                 value={userForm.cedula}
                 onChange={(e) => {
@@ -460,31 +482,56 @@ const UsersPage: React.FC = () => {
                   setUserForm(prev => ({ ...prev, cedula: value }));
                 }}
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="12345678"
-                maxLength={10}
-                required
+                placeholder="123456789012345"
+                maxLength={15}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Email</label>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
               <input
+                id="email"
                 type="email"
                 value={userForm.email}
                 onChange={(e) => setUserForm(prev => ({ ...prev, email: e.target.value }))}
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                required
               />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Teléfono</label>
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Teléfono</label>
             <input
+              id="phone"
               type="tel"
               value={userForm.phone}
               onChange={(e) => setUserForm(prev => ({ ...prev, phone: e.target.value }))}
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
               placeholder="+57 300 123 4567"
             />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="weight" className="block text-sm font-medium text-gray-700">Peso (kg)</label>
+              <input
+                id="weight"
+                type="number"
+                step="0.1"
+                value={userForm.weight}
+                onChange={(e) => setUserForm(prev => ({ ...prev, weight: e.target.value }))}
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="70.5"
+              />
+            </div>
+            <div>
+              <label htmlFor="height" className="block text-sm font-medium text-gray-700">Altura (cm)</label>
+              <input
+                id="height"
+                type="number"
+                value={userForm.height}
+                onChange={(e) => setUserForm(prev => ({ ...prev, height: e.target.value }))}
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="175"
+              />
+            </div>
           </div>
           <div className="grid grid-cols-1 gap-6">
             <PhotoCapture
@@ -493,8 +540,9 @@ const UsersPage: React.FC = () => {
               userName={`${userForm.firstName} ${userForm.lastName}`.trim()}
             />
             <div>
-              <label className="block text-sm font-medium text-gray-700">Código Holler</label>
+              <label htmlFor="holler" className="block text-sm font-medium text-gray-700">Código Holler</label>
               <input
+                id="holler"
                 type="text"
                 value={userForm.holler}
                 onChange={(e) => setUserForm(prev => ({ ...prev, holler: e.target.value.toUpperCase() }))}
@@ -505,8 +553,9 @@ const UsersPage: React.FC = () => {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Rol</label>
+              <label htmlFor="role" className="block text-sm font-medium text-gray-700">Rol</label>
               <select
+                id="role"
                 value={userForm.role}
                 onChange={(e) => setUserForm(prev => ({ ...prev, role: e.target.value as keyof typeof Role }))}
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
@@ -532,8 +581,9 @@ const UsersPage: React.FC = () => {
           </div>
           {modalType === 'create' && userForm.role !== 'CLIENT' && (
             <div>
-              <label className="block text-sm font-medium text-gray-700">Contraseña</label>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">Contraseña</label>
               <input
+                id="password"
                 type="password"
                 value={userForm.password}
                 onChange={(e) => setUserForm(prev => ({ ...prev, password: e.target.value }))}

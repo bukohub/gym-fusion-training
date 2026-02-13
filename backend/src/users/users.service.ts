@@ -10,19 +10,38 @@ export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   async create(createUserDto: CreateUserDto) {
-    const existingUser = await this.prisma.user.findUnique({
-      where: { email: createUserDto.email },
-    });
+    // Check for existing user by email if email is provided
+    if (createUserDto.email) {
+      const existingUser = await this.prisma.user.findFirst({
+        where: { email: createUserDto.email },
+      });
 
-    if (existingUser) {
-      throw new ConflictException('User with this email already exists');
+      if (existingUser) {
+        throw new ConflictException('User with this email already exists');
+      }
+    }
+
+    // Check for existing user by cedula if cedula is provided
+    if (createUserDto.cedula) {
+      const existingUserByCedula = await this.prisma.user.findUnique({
+        where: { cedula: createUserDto.cedula },
+      });
+
+      if (existingUserByCedula) {
+        throw new ConflictException('User with this cedula already exists');
+      }
     }
 
     // For clients, password can be empty - generate a default one
     let password = createUserDto.password;
     if (!password && createUserDto.role === Role.CLIENT) {
-      // Generate a default password based on cedula for clients
-      password = `gym${createUserDto.cedula}`;
+      // Generate a default password based on cedula for clients, fallback to random string
+      password = createUserDto.cedula ? `gym${createUserDto.cedula}` : `gym${Date.now()}`;
+    }
+
+    // If still no password, create a default one
+    if (!password) {
+      password = 'defaultPassword123';
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -43,6 +62,8 @@ export class UsersService {
         avatar: true,
         photo: true,
         holler: true,
+        weight: true,
+        height: true,
         isActive: true,
         createdAt: true,
         updatedAt: true,
@@ -80,6 +101,8 @@ export class UsersService {
           avatar: true,
           photo: true,
           holler: true,
+          weight: true,
+          height: true,
           isActive: true,
           lastLogin: true,
           createdAt: true,
@@ -116,6 +139,8 @@ export class UsersService {
         avatar: true,
         photo: true,
         holler: true,
+        weight: true,
+        height: true,
         isActive: true,
         emailVerified: true,
         lastLogin: true,
@@ -168,12 +193,22 @@ export class UsersService {
     }
 
     if (updateUserDto.email && updateUserDto.email !== user.email) {
-      const existingUser = await this.prisma.user.findUnique({
+      const existingUser = await this.prisma.user.findFirst({
         where: { email: updateUserDto.email },
       });
 
       if (existingUser) {
         throw new ConflictException('Email already in use');
+      }
+    }
+
+    if (updateUserDto.cedula && updateUserDto.cedula !== user.cedula) {
+      const existingUserByCedula = await this.prisma.user.findUnique({
+        where: { cedula: updateUserDto.cedula },
+      });
+
+      if (existingUserByCedula) {
+        throw new ConflictException('Cedula already in use');
       }
     }
 
@@ -197,6 +232,8 @@ export class UsersService {
         avatar: true,
         photo: true,
         holler: true,
+        weight: true,
+        height: true,
         isActive: true,
         emailVerified: true,
         updatedAt: true,
@@ -240,6 +277,8 @@ export class UsersService {
         cedula: true,
         photo: true,
         holler: true,
+        weight: true,
+        height: true,
         isActive: true,
       },
     });
@@ -265,6 +304,8 @@ export class UsersService {
         cedula: true,
         photo: true,
         holler: true,
+        weight: true,
+        height: true,
         isActive: true,
       },
     });

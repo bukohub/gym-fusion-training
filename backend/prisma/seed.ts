@@ -9,7 +9,7 @@ async function main() {
   // Create admin user
   const adminPassword = await bcrypt.hash('admin123', 12);
   const admin = await prisma.user.upsert({
-    where: { email: 'admin@gym.com' },
+    where: { cedula: '12345678' },
     update: {},
     create: {
       email: 'admin@gym.com',
@@ -27,7 +27,7 @@ async function main() {
   // Create receptionist user
   const receptionistPassword = await bcrypt.hash('receptionist123', 12);
   const receptionist = await prisma.user.upsert({
-    where: { email: 'receptionist@gym.com' },
+    where: { cedula: '87654321' },
     update: {},
     create: {
       email: 'receptionist@gym.com',
@@ -45,7 +45,7 @@ async function main() {
   // Create trainer user
   const trainerPassword = await bcrypt.hash('trainer123', 12);
   const trainer = await prisma.user.upsert({
-    where: { email: 'trainer@gym.com' },
+    where: { cedula: '11223344' },
     update: {},
     create: {
       email: 'trainer@gym.com',
@@ -66,7 +66,7 @@ async function main() {
   
   for (let i = 1; i <= 5; i++) {
     const client = await prisma.user.upsert({
-      where: { email: `client${i}@example.com` },
+      where: { cedula: `1000100${i}` },
       update: {},
       create: {
         email: `client${i}@example.com`,

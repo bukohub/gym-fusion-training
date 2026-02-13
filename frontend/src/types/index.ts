@@ -1,10 +1,12 @@
 export interface User {
   id: string;
-  email: string;
+  email?: string;
   firstName: string;
   lastName: string;
-  cedula: string;
+  cedula?: string;
   phone?: string;
+  weight?: number;
+  height?: number;
   role: Role;
   avatar?: string;
   photo?: string;
@@ -174,12 +176,14 @@ export interface LoginData {
 }
 
 export interface RegisterData {
-  email: string;
-  password: string;
+  email?: string;
+  password?: string;
   firstName: string;
   lastName: string;
-  cedula: string;
+  cedula?: string;
   phone?: string;
+  weight?: number;
+  height?: number;
   role?: Role;
   photo?: string;
   holler?: string;

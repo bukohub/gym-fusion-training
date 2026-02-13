@@ -19,12 +19,26 @@ export class AuthService {
   ) {}
 
   async register(registerDto: RegisterDto) {
-    const existingUser = await this.prisma.user.findUnique({
-      where: { email: registerDto.email },
-    });
+    // Check for existing user by email if email is provided
+    if (registerDto.email) {
+      const existingUser = await this.prisma.user.findFirst({
+        where: { email: registerDto.email },
+      });
 
-    if (existingUser) {
-      throw new ConflictException('User with this email already exists');
+      if (existingUser) {
+        throw new ConflictException('User with this email already exists');
+      }
+    }
+
+    // Check for existing user by cedula if cedula is provided
+    if (registerDto.cedula) {
+      const existingUserByCedula = await this.prisma.user.findUnique({
+        where: { cedula: registerDto.cedula },
+      });
+
+      if (existingUserByCedula) {
+        throw new ConflictException('User with this cedula already exists');
+      }
     }
 
     const hashedPassword = await bcrypt.hash(registerDto.password, 12);
@@ -46,6 +60,8 @@ export class AuthService {
         avatar: true,
         photo: true,
         holler: true,
+        weight: true,
+        height: true,
         isActive: true,
         createdAt: true,
       },
@@ -93,7 +109,7 @@ export class AuthService {
   }
 
   async validateUser(email: string, password: string): Promise<User | null> {
-    const user = await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findFirst({
       where: { email },
     });
 
@@ -135,7 +151,7 @@ export class AuthService {
   }
 
   async forgotPassword(email: string) {
-    const user = await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findFirst({
       where: { email },
     });
 

@@ -1,11 +1,13 @@
-import { IsEmail, IsString, IsOptional, IsEnum, MinLength, IsBoolean, ValidateIf } from 'class-validator';
+import { IsEmail, IsString, IsOptional, IsEnum, MinLength, IsBoolean, ValidateIf, IsNumber, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Role } from '../../common/constants/roles';
 
 export class CreateUserDto {
-  @ApiProperty({ example: 'john.doe@example.com' })
+  @ApiProperty({ example: 'john.doe@example.com', required: false })
+  @IsOptional()
+  @ValidateIf((_, value) => value !== '' && value != null)
   @IsEmail()
-  email: string;
+  email?: string;
 
   @ApiProperty({ example: 'password123', minLength: 6, required: false })
   @IsOptional()
@@ -23,15 +25,18 @@ export class CreateUserDto {
 
   @ApiProperty({ example: 'John' })
   @IsString()
+  @IsNotEmpty()
   firstName: string;
 
   @ApiProperty({ example: 'Doe' })
   @IsString()
+  @IsNotEmpty()
   lastName: string;
 
-  @ApiProperty({ example: '12345678' })
+  @ApiProperty({ example: '12345678', required: false })
+  @IsOptional()
   @IsString()
-  cedula: string;
+  cedula?: string;
 
   @ApiProperty({ example: '+1234567890', required: false })
   @IsOptional()
@@ -56,4 +61,14 @@ export class CreateUserDto {
   @IsOptional()
   @IsString()
   holler?: string;
+
+  @ApiProperty({ example: 70.5, required: false })
+  @IsOptional()
+  @IsNumber()
+  weight?: number;
+
+  @ApiProperty({ example: 175, required: false })
+  @IsOptional()
+  @IsNumber()
+  height?: number;
 }
