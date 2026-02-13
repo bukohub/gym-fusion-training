@@ -1,25 +1,25 @@
-// Production Prisma schema for PostgreSQL deployment
-// This should replace schema.prisma for production deployment
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
 model User {
   id                String      @id @default(uuid())
-  email             String?     // Made optional and non-unique
-  password          String?     // Made optional
-  firstName         String?     // Made optional
-  lastName          String?     // Made optional
-  cedula            String?     @unique // Made optional but kept unique
+  email             String?     // Optional email field
+  password          String?     // Optional for user creation
+  firstName         String?     // Optional for user creation
+  lastName          String?     // Optional for user creation
+  cedula            String?     @unique // Optional field
   phone             String?
-  weight            Float?      // Added weight field
-  height            Float?      // Added height field
+  weight            Float?      // Optional weight field
+  height            Float?      // Optional height/size field
   role              String      @default("CLIENT") // ADMIN, RECEPTIONIST, TRAINER, CLIENT
   avatar            String?
   photo             String?     // Photo upload path
@@ -49,7 +49,7 @@ model MembershipPlan {
   name        String   @unique
   description String?
   duration    Int      // Duration in days
-  price       Decimal  // Changed from Float to Decimal for better precision
+  price       Float
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -82,7 +82,7 @@ model Payment {
   id           String    @id @default(uuid())
   userId       String
   membershipId String?
-  amount       Decimal   // Changed from Float to Decimal for better precision
+  amount       Float
   method       String    // CASH, CARD, TRANSFER
   status       String    @default("PENDING") // PENDING, COMPLETED, FAILED, REFUNDED
   description  String?
@@ -154,7 +154,7 @@ model Product {
   id          String   @id @default(uuid())
   name        String
   description String?
-  price       Decimal  // Changed from Float to Decimal for better precision
+  price       Float
   stock       Int      @default(0)
   minStock    Int      @default(0)
   category    String
@@ -172,8 +172,8 @@ model Sale {
   id         String   @id @default(uuid())
   productId  String
   quantity   Int
-  unitPrice  Decimal  // Changed from Float to Decimal for better precision
-  totalPrice Decimal  // Changed from Float to Decimal for better precision
+  unitPrice  Float
+  totalPrice Float
   soldBy     String
   createdAt  DateTime @default(now())
 
