@@ -81,7 +81,7 @@ const ValidationPage: React.FC = () => {
         isValid: false,
         status: 'ERROR',
         message: errorMessage,
-        payment: null,
+        payment: undefined,
       });
       setShowResult(true);
 
@@ -119,18 +119,6 @@ const ValidationPage: React.FC = () => {
     });
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'ACTIVE':
-        return 'text-green-600';
-      case 'EXPIRED':
-        return 'text-red-600';
-      case 'SUSPENDED':
-        return 'text-yellow-600';
-      default:
-        return 'text-gray-600';
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">

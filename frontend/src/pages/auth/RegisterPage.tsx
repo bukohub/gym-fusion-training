@@ -10,9 +10,9 @@ import LoadingSpinner from '../../components/ui/LoadingSpinner';
 const schema = yup.object({
   firstName: yup.string().required('El nombre es requerido'),
   lastName: yup.string().required('El apellido es requerido'),
-  email: yup.string().email('Email inválido').required('El email es requerido'),
-  password: yup.string().min(6, 'La contraseña debe tener al menos 6 caracteres').required('La contraseña es requerida'),
-  cedula: yup.string().required('La cédula es requerida'),
+  email: yup.string().email('Email inválido').optional(),
+  password: yup.string().min(6, 'La contraseña debe tener al menos 6 caracteres').optional(),
+  cedula: yup.string().optional(),
   phone: yup.string().optional(),
   role: yup.mixed<Role>().oneOf(Object.values(Role)).optional(),
   photo: yup.string().optional(),
