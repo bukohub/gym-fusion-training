@@ -29,4 +29,9 @@ export class CreatePaymentDto {
   @IsOptional()
   @IsString()
   transactionId?: string;
+
+  @ApiProperty({ example: 'COMPLETED', enum: ['PENDING', 'COMPLETED', 'FAILED'], required: false })
+  @IsOptional()
+  @IsString()
+  status?: string;
 }

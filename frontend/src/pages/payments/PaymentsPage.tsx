@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { toast } from 'react-hot-toast';
 import Table, { TableColumn } from '../../components/ui/Table';
 import Modal from '../../components/ui/Modal';
 import Pagination from '../../components/ui/Pagination';
+import SearchableSelect, { SearchableSelectOption } from '../../components/ui/SearchableSelect';
 import { paymentsApi } from '../../services/payments';
 import { usersApi } from '../../services/users';
 import { membershipsApi } from '../../services/memberships';
@@ -88,7 +89,7 @@ const PaymentsPage: React.FC = () => {
 
   const loadUsers = async () => {
     try {
-      const response = await usersApi.getAll(1, 100);
+      const response = await usersApi.getAll(1, 1000); // Load more users for better search
       setUsers((response.data as any).users || (response.data as any).data || []);
     } catch (error) {
       toast.error('Error al cargar los usuarios');
@@ -110,7 +111,10 @@ const PaymentsPage: React.FC = () => {
   const handleCreatePayment = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await paymentsApi.create(paymentForm);
+      await paymentsApi.create({
+        ...paymentForm,
+        status: 'COMPLETED' // Default to COMPLETED for payments processed through the modal
+      });
       toast.success('Pago procesado exitosamente');
       setIsModalOpen(false);
       loadPayments();
@@ -215,6 +219,15 @@ const PaymentsPage: React.FC = () => {
     resetRefundForm();
     setIsModalOpen(true);
   };
+
+  // Create searchable options for users
+  const userOptions: SearchableSelectOption[] = useMemo(() => {
+    return users.map(user => ({
+      value: user.id,
+      label: `${user.firstName} ${user.lastName}`,
+      subtitle: user.cedula || user.email || user.phone || 'Sin información adicional',
+    }));
+  }, [users]);
 
   // Table columns
   const paymentColumns: TableColumn<Payment>[] = [
@@ -329,18 +342,14 @@ const PaymentsPage: React.FC = () => {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Cliente</label>
-            <select
+            <SearchableSelect
+              options={userOptions}
               value={filters.userId}
-              onChange={(e) => setFilters(prev => ({ ...prev, userId: e.target.value }))}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-            >
-              <option value="">Todos los Clientes</option>
-              {users.map(user => (
-                <option key={user.id} value={user.id}>
-                  {user.firstName} {user.lastName}
-                </option>
-              ))}
-            </select>
+              onChange={(value) => setFilters(prev => ({ ...prev, userId: value }))}
+              placeholder="Todos los clientes"
+              className="mt-1"
+              emptyMessage="No se encontraron clientes"
+            />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Fecha Desde</label>
@@ -431,20 +440,16 @@ const PaymentsPage: React.FC = () => {
           <form onSubmit={modalType === 'create' ? handleCreatePayment : handleUpdatePayment} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">Cliente</label>
-              <select
+              <SearchableSelect
+                options={userOptions}
                 value={paymentForm.userId}
-                onChange={(e) => setPaymentForm(prev => ({ ...prev, userId: e.target.value }))}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                onChange={(value) => setPaymentForm(prev => ({ ...prev, userId: value }))}
+                placeholder="Buscar y seleccionar cliente..."
+                className="mt-1"
                 required
                 disabled={modalType === 'edit'}
-              >
-                <option value="">Seleccionar cliente</option>
-                {users.map(user => (
-                  <option key={user.id} value={user.id}>
-                    {user.firstName} {user.lastName} ({user.email})
-                  </option>
-                ))}
-              </select>
+                emptyMessage="No se encontraron clientes"
+              />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Membresía (Opcional)</label>

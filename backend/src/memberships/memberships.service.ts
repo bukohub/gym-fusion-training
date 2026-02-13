@@ -499,15 +499,78 @@ export class MembershipsService {
         isValid: false,
         status: 'USER_NOT_FOUND',
         message: 'Usuario no encontrado con esta cédula',
-        membership: null,
+        payment: null,
       };
     }
 
-    // Find their active membership
-    const activeMembership = await this.prisma.membership.findFirst({
+    if (!user.isActive) {
+      // Log failed validation attempt
+      await this.prisma.validationLog.create({
+        data: {
+          userId: user.id,
+          identifier: cedula,
+          validationType: 'CEDULA',
+          success: false,
+          reason: 'Usuario inactivo',
+        },
+      });
+
+      return {
+        isValid: false,
+        status: 'USER_INACTIVE',
+        message: `${user.firstName} ${user.lastName} tiene cuenta inactiva`,
+        payment: null,
+        user: {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          cedula: cedula,
+          photo: user.photo,
+        },
+      };
+    }
+
+    // Get user's active membership to determine plan duration
+    const userMembership = await this.prisma.membership.findFirst({
       where: {
         userId: user.id,
-        status: 'ACTIVE',
+      },
+      include: {
+        plan: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (!userMembership) {
+      // Log failed validation attempt
+      await this.prisma.validationLog.create({
+        data: {
+          userId: user.id,
+          identifier: cedula,
+          validationType: 'CEDULA',
+          success: false,
+          reason: 'Usuario sin plan de membresía',
+        },
+      });
+
+      return {
+        isValid: false,
+        status: 'NO_MEMBERSHIP_PLAN',
+        message: `${user.firstName} ${user.lastName} no tiene un plan de membresía asignado`,
+        payment: null,
+        user: {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          cedula: cedula,
+          photo: user.photo,
+        },
+      };
+    }
+
+    // Find the most recent completed payment
+    const recentPayment = await this.prisma.payment.findFirst({
+      where: {
+        userId: user.id,
+        status: 'COMPLETED',
       },
       include: {
         user: {
@@ -522,17 +585,22 @@ export class MembershipsService {
             photo: true,
           },
         },
-        plan: {
-          select: {
-            name: true,
-            duration: true,
+        membership: {
+          include: {
+            plan: {
+              select: {
+                name: true,
+                duration: true,
+                price: true,
+              },
+            },
           },
         },
       },
-      orderBy: { endDate: 'desc' },
+      orderBy: { createdAt: 'desc' },
     });
 
-    if (!activeMembership) {
+    if (!recentPayment) {
       // Log failed validation attempt
       await this.prisma.validationLog.create({
         data: {
@@ -540,45 +608,105 @@ export class MembershipsService {
           identifier: cedula,
           validationType: 'CEDULA',
           success: false,
-          reason: 'Sin membresía activa',
+          reason: 'Sin pagos completados',
         },
       });
 
       return {
         isValid: false,
-        status: 'NO_ACTIVE_MEMBERSHIP',
-        message: `${user.firstName} ${user.lastName} no tiene membresía activa`,
-        membership: null,
+        status: 'NO_COMPLETED_PAYMENT',
+        message: `${user.firstName} ${user.lastName} no tiene pagos completados`,
+        payment: null,
         user: {
           firstName: user.firstName,
           lastName: user.lastName,
           cedula: cedula,
+          photo: user.photo,
         },
       };
     }
 
-    // Use existing validation logic
-    const validation = await this.validateMembership(activeMembership.id);
-    
-    // Log validation attempt
+    // Calculate days since last payment
+    const daysSincePayment = Math.floor((Date.now() - recentPayment.createdAt.getTime()) / (1000 * 60 * 60 * 24));
+    const planDurationDays = userMembership.plan.duration;
+    const daysUntilExpiry = Math.max(0, planDurationDays - daysSincePayment);
+    const isPaymentValid = daysSincePayment <= planDurationDays;
+
+    if (!isPaymentValid) {
+      // Log failed validation attempt
+      await this.prisma.validationLog.create({
+        data: {
+          userId: user.id,
+          identifier: cedula,
+          validationType: 'CEDULA',
+          success: false,
+          reason: `Pago expirado. Plan de ${planDurationDays} días, último pago hace ${daysSincePayment} días`,
+        },
+      });
+
+      return {
+        isValid: false,
+        status: 'PAYMENT_EXPIRED',
+        message: `${user.firstName} ${user.lastName} - pago expirado. Plan de ${planDurationDays} días, último pago hace ${daysSincePayment} días`,
+        payment: {
+          id: recentPayment.id,
+          amount: recentPayment.amount,
+          method: recentPayment.method,
+          description: recentPayment.description,
+          paymentDate: recentPayment.createdAt,
+          daysSincePayment,
+          daysUntilExpiry,
+          user: recentPayment.user,
+          membership: recentPayment.membership,
+        },
+        user: {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          cedula: cedula,
+          photo: user.photo,
+        },
+      };
+    }
+
+    // Log successful validation
     await this.prisma.validationLog.create({
       data: {
         userId: user.id,
         identifier: cedula,
         validationType: 'CEDULA',
-        success: validation.isValid,
-        reason: validation.isValid ? null : validation.message,
+        success: true,
+        reason: null,
       },
     });
 
-    return validation;
+    return {
+      isValid: true,
+      status: 'PAYMENT_VALID',
+      message: `${user.firstName} ${user.lastName} tiene pago válido (${daysUntilExpiry} días restantes)`,
+      payment: {
+        id: recentPayment.id,
+        amount: recentPayment.amount,
+        method: recentPayment.method,
+        description: recentPayment.description,
+        paymentDate: recentPayment.createdAt,
+        daysSincePayment,
+        daysUntilExpiry,
+        user: recentPayment.user,
+        membership: recentPayment.membership,
+        plan: {
+          name: userMembership.plan.name,
+          duration: userMembership.plan.duration,
+          price: userMembership.plan.price,
+        },
+      },
+    };
   }
 
   async validateMembershipByHoller(holler: string) {
     // First find the user by holler
     const user = await this.prisma.user.findFirst({
       where: { holler },
-      select: { id: true, isActive: true, firstName: true, lastName: true, cedula: true, photo: true },
+      select: { id: true, isActive: true, firstName: true, lastName: true, cedula: true, photo: true, holler: true },
     });
 
     if (!user) {
@@ -597,15 +725,80 @@ export class MembershipsService {
         isValid: false,
         status: 'USER_NOT_FOUND',
         message: 'Usuario no encontrado con este holler',
-        membership: null,
+        payment: null,
       };
     }
 
-    // Find their active membership
-    const activeMembership = await this.prisma.membership.findFirst({
+    if (!user.isActive) {
+      // Log failed validation attempt
+      await this.prisma.validationLog.create({
+        data: {
+          userId: user.id,
+          identifier: holler,
+          validationType: 'HOLLER',
+          success: false,
+          reason: 'Usuario inactivo',
+        },
+      });
+
+      return {
+        isValid: false,
+        status: 'USER_INACTIVE',
+        message: `${user.firstName} ${user.lastName} tiene cuenta inactiva`,
+        payment: null,
+        user: {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          cedula: user.cedula,
+          photo: user.photo,
+          holler: user.holler,
+        },
+      };
+    }
+
+    // Get user's active membership to determine plan duration
+    const userMembership = await this.prisma.membership.findFirst({
       where: {
         userId: user.id,
-        status: 'ACTIVE',
+      },
+      include: {
+        plan: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (!userMembership) {
+      // Log failed validation attempt
+      await this.prisma.validationLog.create({
+        data: {
+          userId: user.id,
+          identifier: holler,
+          validationType: 'HOLLER',
+          success: false,
+          reason: 'Usuario sin plan de membresía',
+        },
+      });
+
+      return {
+        isValid: false,
+        status: 'NO_MEMBERSHIP_PLAN',
+        message: `${user.firstName} ${user.lastName} no tiene un plan de membresía asignado`,
+        payment: null,
+        user: {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          cedula: user.cedula,
+          photo: user.photo,
+          holler: user.holler,
+        },
+      };
+    }
+
+    // Find the most recent completed payment
+    const recentPayment = await this.prisma.payment.findFirst({
+      where: {
+        userId: user.id,
+        status: 'COMPLETED',
       },
       include: {
         user: {
@@ -621,17 +814,22 @@ export class MembershipsService {
             holler: true,
           },
         },
-        plan: {
-          select: {
-            name: true,
-            duration: true,
+        membership: {
+          include: {
+            plan: {
+              select: {
+                name: true,
+                duration: true,
+                price: true,
+              },
+            },
           },
         },
       },
-      orderBy: { endDate: 'desc' },
+      orderBy: { createdAt: 'desc' },
     });
 
-    if (!activeMembership) {
+    if (!recentPayment) {
       // Log failed validation attempt
       await this.prisma.validationLog.create({
         data: {
@@ -639,38 +837,284 @@ export class MembershipsService {
           identifier: holler,
           validationType: 'HOLLER',
           success: false,
-          reason: 'Sin membresía activa',
+          reason: 'Sin pagos completados',
         },
       });
 
       return {
         isValid: false,
-        status: 'NO_ACTIVE_MEMBERSHIP',
-        message: `${user.firstName} ${user.lastName} no tiene membresía activa`,
-        membership: null,
+        status: 'NO_COMPLETED_PAYMENT',
+        message: `${user.firstName} ${user.lastName} no tiene pagos completados`,
+        payment: null,
         user: {
           firstName: user.firstName,
           lastName: user.lastName,
           cedula: user.cedula,
           photo: user.photo,
+          holler: user.holler,
         },
       };
     }
 
-    // Use existing validation logic
-    const validation = await this.validateMembership(activeMembership.id);
-    
-    // Log validation attempt
+    // Calculate days since last payment
+    const daysSincePayment = Math.floor((Date.now() - recentPayment.createdAt.getTime()) / (1000 * 60 * 60 * 24));
+    const planDurationDays = userMembership.plan.duration;
+    const daysUntilExpiry = Math.max(0, planDurationDays - daysSincePayment);
+    const isPaymentValid = daysSincePayment <= planDurationDays;
+
+    if (!isPaymentValid) {
+      // Log failed validation attempt
+      await this.prisma.validationLog.create({
+        data: {
+          userId: user.id,
+          identifier: holler,
+          validationType: 'HOLLER',
+          success: false,
+          reason: `Pago expirado. Plan de ${planDurationDays} días, último pago hace ${daysSincePayment} días`,
+        },
+      });
+
+      return {
+        isValid: false,
+        status: 'PAYMENT_EXPIRED',
+        message: `${user.firstName} ${user.lastName} - pago expirado. Plan de ${planDurationDays} días, último pago hace ${daysSincePayment} días`,
+        payment: {
+          id: recentPayment.id,
+          amount: recentPayment.amount,
+          method: recentPayment.method,
+          description: recentPayment.description,
+          paymentDate: recentPayment.createdAt,
+          daysSincePayment,
+          daysUntilExpiry,
+          user: recentPayment.user,
+          membership: recentPayment.membership,
+        },
+        user: {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          cedula: user.cedula,
+          photo: user.photo,
+          holler: user.holler,
+        },
+      };
+    }
+
+    // Log successful validation
     await this.prisma.validationLog.create({
       data: {
         userId: user.id,
         identifier: holler,
         validationType: 'HOLLER',
-        success: validation.isValid,
-        reason: validation.isValid ? null : validation.message,
+        success: true,
+        reason: null,
       },
     });
 
-    return validation;
+    return {
+      isValid: true,
+      status: 'PAYMENT_VALID',
+      message: `${user.firstName} ${user.lastName} tiene pago válido (${daysUntilExpiry} días restantes)`,
+      payment: {
+        id: recentPayment.id,
+        amount: recentPayment.amount,
+        method: recentPayment.method,
+        description: recentPayment.description,
+        paymentDate: recentPayment.createdAt,
+        daysSincePayment,
+        daysUntilExpiry,
+        user: recentPayment.user,
+        membership: recentPayment.membership,
+        plan: {
+          name: userMembership.plan.name,
+          duration: userMembership.plan.duration,
+          price: userMembership.plan.price,
+        },
+      },
+    };
+  }
+
+  async getPaymentStatusReport(
+    page = 1,
+    limit = 20,
+    status: 'expired' | 'expiring_today' | 'expiring_soon' | 'current' | 'all' = 'all',
+    expiringDays = 7,
+  ) {
+    const offset = (page - 1) * limit;
+
+    // Get all users with their memberships and most recent payment
+    const usersWithMemberships = await this.prisma.user.findMany({
+      where: {
+        isActive: true,
+      },
+      include: {
+        payments: {
+          where: {
+            status: 'COMPLETED',
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+          take: 1,
+        },
+        memberships: {
+          include: {
+            plan: true,
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+          take: 1,
+        },
+      },
+    });
+
+    // Process each user to determine payment expiration status
+    const processedUsers = usersWithMemberships
+      .filter(user => user.memberships.length > 0) // Only users with memberships
+      .map(user => {
+        const recentPayment = user.payments[0];
+        const membership = user.memberships[0];
+        const now = new Date();
+
+        if (!recentPayment || !membership.plan) {
+          return {
+            user: {
+              id: user.id,
+              firstName: user.firstName,
+              lastName: user.lastName,
+              email: user.email,
+              phone: user.phone,
+              cedula: user.cedula,
+              photo: user.photo,
+            },
+            payment: null,
+            membership: {
+              id: membership.id,
+              plan: membership.plan,
+              startDate: membership.startDate,
+              endDate: membership.endDate,
+              status: membership.status,
+            },
+            status: 'no_payment',
+            statusLabel: 'Sin Pagos',
+            daysUntilPaymentExpiry: null,
+            paymentExpirationDate: null,
+            lastPaymentDate: null,
+          };
+        }
+
+        // Calculate payment expiration: last payment date + plan duration
+        const lastPaymentDate = recentPayment.createdAt;
+        const planDurationDays = membership.plan.duration;
+        const paymentExpirationDate = new Date(lastPaymentDate.getTime() + (planDurationDays * 24 * 60 * 60 * 1000));
+        const daysUntilPaymentExpiry = Math.ceil((paymentExpirationDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+
+        let paymentStatus: string;
+        let statusLabel: string;
+
+        if (daysUntilPaymentExpiry < 0) {
+          paymentStatus = 'expired';
+          statusLabel = 'Pago Expirado';
+        } else if (daysUntilPaymentExpiry === 0) {
+          paymentStatus = 'expiring_today';
+          statusLabel = 'Pago Expira Hoy';
+        } else if (daysUntilPaymentExpiry <= expiringDays) {
+          paymentStatus = 'expiring_soon';
+          statusLabel = `Pago expira en ${daysUntilPaymentExpiry} días`;
+        } else {
+          paymentStatus = 'current';
+          statusLabel = `${daysUntilPaymentExpiry} días hasta expirar pago`;
+        }
+
+        return {
+          user: {
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            phone: user.phone,
+            cedula: user.cedula,
+            photo: user.photo,
+          },
+          payment: {
+            id: recentPayment.id,
+            amount: recentPayment.amount,
+            method: recentPayment.method,
+            description: recentPayment.description,
+          },
+          membership: {
+            id: membership.id,
+            plan: membership.plan,
+            startDate: membership.startDate,
+            endDate: membership.endDate,
+            status: membership.status,
+          },
+          status: paymentStatus,
+          statusLabel,
+          daysUntilPaymentExpiry,
+          paymentExpirationDate,
+          lastPaymentDate,
+        };
+      });
+
+    // Filter based on status
+    let filteredUsers = processedUsers;
+    if (status !== 'all') {
+      filteredUsers = processedUsers.filter(user => user.status === status);
+    }
+
+    // Sort by priority: expired first, then expiring today, then expiring soon, then current
+    const statusPriority = {
+      'expired': 1,
+      'expiring_today': 2,
+      'expiring_soon': 3,
+      'current': 4,
+      'no_payment': 5,
+    };
+
+    filteredUsers.sort((a, b) => {
+      const priorityA = statusPriority[a.status as keyof typeof statusPriority] || 6;
+      const priorityB = statusPriority[b.status as keyof typeof statusPriority] || 6;
+
+      if (priorityA !== priorityB) {
+        return priorityA - priorityB;
+      }
+
+      // Secondary sort by days until payment expiry (ascending)
+      if (a.daysUntilPaymentExpiry !== null && b.daysUntilPaymentExpiry !== null) {
+        return a.daysUntilPaymentExpiry - b.daysUntilPaymentExpiry;
+      }
+
+      return 0;
+    });
+
+    // Paginate results
+    const total = filteredUsers.length;
+    const paginatedUsers = filteredUsers.slice(offset, offset + limit);
+
+    // Calculate summary statistics
+    const stats = {
+      total: processedUsers.length,
+      expired: processedUsers.filter(u => u.status === 'expired').length,
+      expiringToday: processedUsers.filter(u => u.status === 'expiring_today').length,
+      expiringSoon: processedUsers.filter(u => u.status === 'expiring_soon').length,
+      current: processedUsers.filter(u => u.status === 'current').length,
+      noPayment: processedUsers.filter(u => u.status === 'no_payment').length,
+    };
+
+    return {
+      users: paginatedUsers,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+      stats,
+      filters: {
+        status,
+        expiringDays,
+      },
+    };
   }
 }

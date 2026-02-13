@@ -11,7 +11,7 @@ export class PaymentsService {
     return this.prisma.payment.create({
       data: {
         ...createPaymentDto,
-        status: 'PENDING',
+        status: createPaymentDto.status || 'PENDING',
         transactionId: createPaymentDto.transactionId || `TXN${Date.now()}`,
       },
       include: {

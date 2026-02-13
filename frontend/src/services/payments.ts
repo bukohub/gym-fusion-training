@@ -7,6 +7,7 @@ export interface CreatePaymentDto {
   amount: number;
   method: string;
   description?: string;
+  status?: string;
 }
 
 export interface UpdatePaymentDto {

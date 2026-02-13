@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { reportsApi } from '../../services/reports';
+import PaymentStatusReport from '../../components/reports/PaymentStatusReport';
 
 interface DashboardStats {
   totalUsers: number;
@@ -14,7 +15,7 @@ interface DashboardStats {
 const ReportsPage: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'revenue' | 'memberships' | 'classes' | 'users'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'revenue' | 'memberships' | 'classes' | 'users' | 'payment-status'>('dashboard');
   
   // Date filters
   const [dateFilters, setDateFilters] = useState({
@@ -28,6 +29,9 @@ const ReportsPage: React.FC = () => {
   useEffect(() => {
     if (activeTab === 'dashboard') {
       loadDashboardStats();
+    } else if (activeTab === 'payment-status') {
+      // PaymentStatusReport component handles its own data loading
+      return;
     } else {
       loadReportData();
     }
@@ -168,6 +172,12 @@ const ReportsPage: React.FC = () => {
             >
               📈 User Growth Report
             </button>
+            <button
+              onClick={() => setActiveTab('payment-status')}
+              className="w-full text-left px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+            >
+              💳 Payment Status Report
+            </button>
           </div>
         </div>
 
@@ -264,6 +274,7 @@ const ReportsPage: React.FC = () => {
             { key: 'memberships', label: 'Memberships', icon: '👥' },
             { key: 'classes', label: 'Classes', icon: '🏃‍♂️' },
             { key: 'users', label: 'Users', icon: '📈' },
+            { key: 'payment-status', label: 'Estado de Pagos', icon: '💳' },
           ].map((tab) => (
             <button
               key={tab.key}
@@ -282,7 +293,13 @@ const ReportsPage: React.FC = () => {
       </div>
 
       {/* Content */}
-      {activeTab === 'dashboard' ? <DashboardView /> : <ReportView />}
+      {activeTab === 'dashboard' ? (
+        <DashboardView />
+      ) : activeTab === 'payment-status' ? (
+        <PaymentStatusReport />
+      ) : (
+        <ReportView />
+      )}
     </div>
   );
 };

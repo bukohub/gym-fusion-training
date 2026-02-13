@@ -1,43 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
-import { CheckCircleIcon, XCircleIcon, UserIcon, CalendarIcon, ClockIcon } from '@heroicons/react/24/solid';
-import { membershipsApi } from '../../services/memberships';
+import { CheckCircleIcon, XCircleIcon, UserIcon, CalendarIcon, ClockIcon, CreditCardIcon, BanknotesIcon } from '@heroicons/react/24/solid';
+import { membershipsApi, ValidationResponse } from '../../services/memberships';
 import { uploadsApi } from '../../services/uploads';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
-
-interface ValidationResult {
-  isValid: boolean;
-  status: string;
-  message: string;
-  membership: {
-    id: string;
-    startDate: string;
-    endDate: string;
-    status: string;
-    daysRemaining: number;
-    user: {
-      id: string;
-      firstName: string;
-      lastName: string;
-      email: string;
-      phone: string;
-      isActive: boolean;
-      cedula: string;
-      photo?: string;
-      holler?: string;
-    };
-    plan: {
-      name: string;
-      duration: number;
-    };
-  } | null;
-  user?: {
-    firstName: string;
-    lastName: string;
-    cedula: string;
-    photo?: string;
-  };
-}
 
 const UserPhoto: React.FC<{ photo?: string; name: string; className?: string }> = ({ photo, name, className = "w-20 h-20" }) => {
   if (photo) {
@@ -61,7 +27,7 @@ const ValidationPage: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
   const [validationType, setValidationType] = useState<'cedula' | 'holler'>('cedula');
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<ValidationResult | null>(null);
+  const [result, setResult] = useState<ValidationResponse | null>(null);
   const [showResult, setShowResult] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -110,15 +76,15 @@ const ValidationPage: React.FC = () => {
       }, 5000);
       
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'Error al validar la membresía';
+      const errorMessage = error.response?.data?.message || 'Error al validar el pago';
       setResult({
         isValid: false,
         status: 'ERROR',
         message: errorMessage,
-        membership: null,
+        payment: null,
       });
       setShowResult(true);
-      
+
       // Auto-clear error after 3 seconds
       setTimeout(() => {
         setShowResult(false);
@@ -172,10 +138,10 @@ const ValidationPage: React.FC = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Validación de Membresía
+            Validación de Pago
           </h1>
           <p className="text-lg text-gray-600">
-            Ingrese {validationType === 'cedula' ? 'el número de cédula' : 'el código del holler'} para validar el acceso
+            Ingrese {validationType === 'cedula' ? 'el número de cédula' : 'el código del holler'} para validar el pago mensual
           </p>
         </div>
 
@@ -271,90 +237,73 @@ const ValidationPage: React.FC = () => {
             // Results Display
             <div className="text-center">
               {result?.isValid ? (
-                // Valid Membership - Green Screen
+                // Valid Payment - Green Screen
                 <div className="space-y-6">
                   <div className="flex justify-center">
                     <CheckCircleIcon className="w-32 h-32 text-green-500 animate-pulse" />
                   </div>
-                  
+
                   <div className="space-y-2">
                     <h2 className="text-4xl font-bold text-green-600">ACCESO PERMITIDO</h2>
                     <p className="text-xl text-gray-600">{result.message}</p>
                   </div>
 
-                  {result.membership && (
+                  {result.payment && (
                     <div className="bg-green-50 rounded-xl p-6 space-y-4">
                       <div className="flex flex-col items-center space-y-4">
-                        <UserPhoto 
-                          photo={result.membership.user.photo} 
-                          name={`${result.membership.user.firstName} ${result.membership.user.lastName}`}
+                        <UserPhoto
+                          photo={result.payment.user.photo}
+                          name={`${result.payment.user.firstName} ${result.payment.user.lastName}`}
                           className="w-24 h-24"
                         />
                         <h3 className="text-2xl font-semibold text-green-800">
-                          {result.membership.user.firstName} {result.membership.user.lastName}
+                          {result.payment.user.firstName} {result.payment.user.lastName}
                         </h3>
                       </div>
-                      
+
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                         <div className="flex items-center space-x-2">
+                          <BanknotesIcon className="w-5 h-5 text-green-600" />
+                          <span>Último pago: <strong>${result.payment.amount.toLocaleString()}</strong></span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <CreditCardIcon className="w-5 h-5 text-green-600" />
+                          <span>Método: <strong>{result.payment.method === 'CASH' ? 'Efectivo' : result.payment.method === 'CARD' ? 'Tarjeta' : result.payment.method === 'TRANSFER' ? 'Transferencia' : result.payment.method}</strong></span>
+                        </div>
+                        <div className="flex items-center space-x-2">
                           <CalendarIcon className="w-5 h-5 text-green-600" />
-                          <span>Plan: <strong>{result.membership.plan.name}</strong></span>
+                          <span>Fecha de pago: <strong>{formatDate(result.payment.paymentDate)}</strong></span>
                         </div>
                         <div className="flex items-center space-x-2">
                           <ClockIcon className="w-5 h-5 text-green-600" />
-                          <span>Días restantes: <strong>{result.membership.daysRemaining}</strong></span>
+                          <span>Días restantes: <strong>{result.payment.daysUntilExpiry}</strong></span>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <CalendarIcon className="w-5 h-5 text-green-600" />
-                          <span>Válida hasta: <strong>{formatDate(result.membership.endDate)}</strong></span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <span>Estado: <strong className={getStatusColor(result.membership.status)}>{result.membership.status}</strong></span>
-                        </div>
+                        {(result.payment.membership?.plan || result.payment.plan) && (
+                          <div className="flex items-center space-x-2 md:col-span-2">
+                            <CalendarIcon className="w-5 h-5 text-green-600" />
+                            <span>Plan: <strong>{result.payment.membership?.plan?.name || result.payment.plan?.name} ({result.payment.membership?.plan?.duration || result.payment.plan?.duration} días)</strong></span>
+                          </div>
+                        )}
+                        {result.payment.description && (
+                          <div className="flex items-center space-x-2 md:col-span-2">
+                            <span>Descripción: <strong>{result.payment.description}</strong></span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
                 </div>
               ) : (
-                // Invalid Membership - Red Screen
+                // Invalid Payment - Red Screen
                 <div className="space-y-6">
                   <div className="flex justify-center">
                     <XCircleIcon className="w-32 h-32 text-red-500 animate-pulse" />
                   </div>
-                  
+
                   <div className="space-y-2">
                     <h2 className="text-4xl font-bold text-red-600">ACCESO DENEGADO</h2>
                     <p className="text-xl text-gray-600">{result?.message}</p>
                   </div>
-
-                  {result?.membership && (
-                    <div className="bg-red-50 rounded-xl p-6 space-y-4">
-                      <div className="flex flex-col items-center space-y-4">
-                        <UserPhoto 
-                          photo={result.membership.user.photo} 
-                          name={`${result.membership.user.firstName} ${result.membership.user.lastName}`}
-                          className="w-24 h-24"
-                        />
-                        <h3 className="text-2xl font-semibold text-red-800">
-                          {result.membership.user.firstName} {result.membership.user.lastName}
-                        </h3>
-                      </div>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                        <div className="flex items-center space-x-2">
-                          <CalendarIcon className="w-5 h-5 text-red-600" />
-                          <span>Plan: <strong>{result.membership.plan.name}</strong></span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <ClockIcon className="w-5 h-5 text-red-600" />
-                          <span>Expiró: <strong>{formatDate(result.membership.endDate)}</strong></span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <span>Estado: <strong className={getStatusColor(result.membership.status)}>{result.membership.status}</strong></span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
 
                   {result?.status === 'USER_NOT_FOUND' && (
                     <div className="bg-gray-50 rounded-xl p-4">
@@ -363,24 +312,75 @@ const ValidationPage: React.FC = () => {
                       </p>
                     </div>
                   )}
-                  
-                  {(result as any)?.user && !result?.membership && (
+
+                  {result?.user && (
                     <div className="bg-gray-50 rounded-xl p-6 space-y-4">
                       <div className="flex flex-col items-center space-y-4">
-                        <UserPhoto 
-                          photo={(result as any).user.photo} 
-                          name={`${(result as any).user.firstName} ${(result as any).user.lastName}`}
+                        <UserPhoto
+                          photo={result.user.photo}
+                          name={`${result.user.firstName} ${result.user.lastName}`}
                           className="w-20 h-20"
                         />
                         <div className="text-center">
                           <p className="text-gray-600">
-                            Usuario: <strong>{(result as any).user.firstName} {(result as any).user.lastName}</strong>
+                            Usuario: <strong>{result.user.firstName} {result.user.lastName}</strong>
                           </p>
-                          <p className="text-gray-600">
-                            Cédula: <strong>{(result as any).user.cedula}</strong>
-                          </p>
+                          {result.user.cedula && (
+                            <p className="text-gray-600">
+                              Cédula: <strong>{result.user.cedula}</strong>
+                            </p>
+                          )}
+                          {result.user.holler && (
+                            <p className="text-gray-600">
+                              Holler: <strong>{result.user.holler}</strong>
+                            </p>
+                          )}
                         </div>
                       </div>
+
+                      {(result.status === 'NO_RECENT_PAYMENT' || result.status === 'NO_COMPLETED_PAYMENT') && (
+                        <div className="bg-yellow-50 rounded-xl p-4">
+                          <div className="flex items-center space-x-2 text-yellow-800">
+                            <ClockIcon className="w-5 h-5" />
+                            <p className="font-semibold">
+                              Sin pagos completados. Se requiere realizar un pago para acceder al gimnasio.
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
+                      {result.status === 'PAYMENT_EXPIRED' && (
+                        <div className="bg-red-50 rounded-xl p-4">
+                          <div className="flex items-center space-x-2 text-red-800">
+                            <XCircleIcon className="w-5 h-5" />
+                            <p className="font-semibold">
+                              Pago expirado. El tiempo del plan de membresía ha vencido.
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
+                      {result.status === 'NO_MEMBERSHIP_PLAN' && (
+                        <div className="bg-gray-50 rounded-xl p-4">
+                          <div className="flex items-center space-x-2 text-gray-800">
+                            <XCircleIcon className="w-5 h-5" />
+                            <p className="font-semibold">
+                              Usuario sin plan de membresía asignado. Contacte administración.
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
+                      {result.status === 'USER_INACTIVE' && (
+                        <div className="bg-red-50 rounded-xl p-4">
+                          <div className="flex items-center space-x-2 text-red-800">
+                            <XCircleIcon className="w-5 h-5" />
+                            <p className="font-semibold">
+                              Cuenta de usuario inactiva. Contacte administración.
+                            </p>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -392,9 +392,9 @@ const ValidationPage: React.FC = () => {
         {/* Instructions */}
         <div className="text-center text-gray-600">
           <p className="text-sm">
-            {showResult 
+            {showResult
               ? "El resultado se borrará automáticamente en unos segundos..."
-              : "Escanee la cédula o ingrese el número manualmente"
+              : "Sistema basado en plan de membresía - Valida pagos según duración del plan asignado"
             }
           </p>
         </div>

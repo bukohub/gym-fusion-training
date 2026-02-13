@@ -111,6 +111,22 @@ export class MembershipsController {
     return this.membershipsService.getMembershipStats();
   }
 
+  @Get('payment-status-report')
+  @Roles(Role.ADMIN, Role.RECEPTIONIST)
+  @ApiOperation({ summary: 'Get payment status report for all users' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({ name: 'status', required: false, enum: ['expired', 'expiring_today', 'expiring_soon', 'current', 'all'] })
+  @ApiQuery({ name: 'expiringDays', required: false, type: Number, description: 'Days ahead to consider as expiring soon (default: 7)' })
+  getPaymentStatusReport(
+    @Query('page', new ParseIntPipe({ optional: true })) page = 1,
+    @Query('limit', new ParseIntPipe({ optional: true })) limit = 20,
+    @Query('status') status: 'expired' | 'expiring_today' | 'expiring_soon' | 'current' | 'all' = 'all',
+    @Query('expiringDays', new ParseIntPipe({ optional: true })) expiringDays = 7,
+  ) {
+    return this.membershipsService.getPaymentStatusReport(page, limit, status, expiringDays);
+  }
+
   @Get('expiring')
   @Roles(Role.ADMIN, Role.RECEPTIONIST)
   @ApiOperation({ summary: 'Get expiring memberships' })
