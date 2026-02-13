@@ -21,7 +21,8 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       configService.get('CORS_ORIGIN'),
-      'https://frontend-opal-ten-97.vercel.app',
+      'https://fusion-training.vercel.app',  // New custom domain
+      'https://frontend-opal-ten-97.vercel.app',  // Keep old domain for backup
       'http://localhost:5173', // for local development
     ].filter(Boolean),
     credentials: true,
